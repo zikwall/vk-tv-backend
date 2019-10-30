@@ -1,0 +1,23 @@
+{
+  "name": "zikwall/vk-tv-backend",
+  "description": "Back-end for VK TV",
+  "keywords": ["tv", "vk", "php", "back-end", "online"],
+  "support": {
+    "issues": "https://github.com/zikwall/vk-tv-backend/issues?state=open",
+    "source": "https://github.com/zikwall/vk-tv-backend"
+  },
+  "authors": [
+    {
+      "name": "Andrey Kapitonov",
+      "email": "andrey.kapitonov.96@gmall.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "zikwall\\vk-tv-backend\\": "src/"
+    }
+  }
+}
