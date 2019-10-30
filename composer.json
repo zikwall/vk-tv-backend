@@ -24,7 +24,7 @@
   },
   "autoload": {
     "psr-4": {
-      "zikwall\\vk-tv-backend\\": "src/"
+      "zikwall\\vktv\\": "src/"
     }
   }
 }
