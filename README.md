@@ -1,1 +1,0 @@
-# vk-tv-backend
