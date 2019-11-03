@@ -10,19 +10,6 @@ use yii\web\Response;
 
 class ApiController extends Controller
 {
-    public function behaviors()
-    {
-        return [
-            'contentNegotiator' => [
-                'class' => ContentNegotiator::class,
-                'formatParam' => '_format',
-                'formats' => [
-                    'application/json' => Response::FORMAT_JSON,
-                ],
-            ],
-        ];
-    }
-
     public function beforeAction($action)
     {
         Yii::$app->response->headers->set('Access-Control-Allow-Methods', ['POST', 'OPTIONS']);
@@ -39,6 +26,8 @@ class ApiController extends Controller
         Yii::$app->response->headers->set('Access-Control-Allow-Origin', '*');
         Yii::$app->response->headers->set('Access-Control-Allow-Credentials', true);
         Yii::$app->response->headers->set('Access-Control-Max-Age', 86400);
+
+        return true;
     }
 
     public function actionChannels()
