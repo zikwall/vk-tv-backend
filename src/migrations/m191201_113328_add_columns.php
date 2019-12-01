@@ -1,8 +1,5 @@
 <?php
 
-
-namespace zikwall\vktv\migrations;
-
 use yii\db\Migration;
 
 class m191201_113328_add_columns extends Migration
