@@ -1,13 +1,21 @@
 <div id="jw"></div>
 
 <?php
+$embed = $embed['url'];
 
 $JW = <<<JS
-    jwplayer("jw").setup({
-        file: 'https://83tpjqlujs1.a.trbcdn.net/livemaster/tftrm1v2h9_stream1/playlist.m3u8',
+    const player = jwplayer('jw');
+    
+    player.setup({
+        file: '$embed',
         image: 'https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg',
         autostart: true,
-        mute: true
+        mute: true,
+    });
+    
+    player.on('pause', (event) => {
+        console.log(event);
+        window.ReactNativeWebView.postMessage(event);
     });
 JS;
 
