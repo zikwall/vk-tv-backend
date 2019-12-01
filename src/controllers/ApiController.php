@@ -30,13 +30,41 @@ class ApiController extends Controller
         return true;
     }
 
-    public function actionChannels()
+    public function actionChannels(int $useHttp = 0)
     {
+        /**
+         * TODO Create Cache Layer
+         *
+         * Caches:
+         * - http/https
+         * - https
+         */
         $playlists = (new Query())
             ->select(['epg_id', 'name', 'url'])
             ->from('playlist')
-            ->all();
+            ->where(['and',
+                [
+                    'active' => 1
+                ],
+                [
+                    'blocked' => 0,
+                ]
+            ]);
 
-        return $this->asJson($playlists);
+        if ($useHttp === 0) {
+            $playlists->andWhere(['ssl' => 1]);
+        }
+
+        return $this->asJson($playlists->all());
+    }
+
+    public function actionBlockedList()
+    {
+        //
+    }
+
+    public function actionInactiveList()
+    {
+        //
     }
 }
