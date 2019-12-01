@@ -41,7 +41,7 @@ class GenerateController extends Controller
         Playlist::deleteAll();
 
         Yii::$app->db->createCommand()->batchInsert('{{playlist}}',
-            ['epg_id', Html::encode('name'), 'url'],
+            ['epg_id', Html::encode('name'), 'url', 'ssl'],
             $playlist
         )->execute();
     }
