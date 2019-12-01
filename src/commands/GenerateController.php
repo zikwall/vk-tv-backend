@@ -6,11 +6,13 @@ use Yii;
 use yii\console\Controller;
 use yii\helpers\Html;
 use zikwall\m3uparse\Aggregation;
-use zikwall\m3uparse\Configure;
+
 use zikwall\m3uparse\parsers\{
-    Free,
-    FreeBestTv
+    free\Free,
+    freebesttv\FreeBestTv,
+    vasiliy78L\Base
 };
+
 use vktv\models\Playlist;
 
 class GenerateController extends Controller
@@ -29,8 +31,8 @@ class GenerateController extends Controller
 
     public function actionIndex()
     {
-        $agg = new Aggregation(new Configure('/web/uploads/playlists'));
-        $playlist = $agg->merge(new Free(), new FreeBestTv());
+        $agg = new Aggregation(new \zikwall\m3uparse\Configuration());
+        $playlist = $agg->merge(new Base(), new FreeBestTv());
 
         if (empty($playlist)) {
             return;
