@@ -16,7 +16,7 @@ use yii\helpers\Html;
         <?= Html::csrfMetaTags() ?>
         <?php $this->head() ?>
     </head>
-    <body>
+    <body style="margin:0;padding:0;">
     <?php $this->beginBody() ?>
         <?= $content ?>
     <?php $this->endBody() ?>
