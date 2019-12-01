@@ -1,14 +1,17 @@
 <?php
 
+
 namespace zikwall\vktv\controllers;
 
 use Yii;
 use yii\db\Query;
-use yii\rest\Controller;
+use yii\web\Controller;
 use yii\web\Response;
 
-class ApiController extends Controller
+class EmbedController extends Controller
 {
+    public $layout = 'embed';
+
     public function beforeAction($action)
     {
         Yii::$app->response->headers->set('Access-Control-Allow-Methods', ['POST', 'OPTIONS']);
@@ -29,41 +32,31 @@ class ApiController extends Controller
         return true;
     }
 
-    public function actionChannels(int $useHttp = 0)
+    public function actionGive(int $epg)
     {
-        /**
-         * TODO Create Cache Layer
-         *
-         * Caches:
-         * - http/https
-         * - https
-         */
-        $playlists = (new Query())
-            ->select(['epg_id', 'name', 'url'])
+        if (empty($epg)) {
+            return \yii\base\InvalidArgumentException('Epg ID is required');
+        }
+
+        $embed = (new Query())
+            ->select('url')
             ->from('playlist')
             ->where(['and',
                 [
-                    'active' => 1
+                    'epg_id' => $epg
                 ],
                 [
-                    'blocked' => 0,
+                    'blocked' => 0
                 ]
-            ]);
+            ])
+            ->one();
 
-        if ($useHttp === 0) {
-            $playlists->andWhere(['ssl' => 1]);
+        if (!$embed) {
+            return \yii\web\NotFoundHttpException('Channed Not Found');
         }
 
-        return $this->asJson($playlists->all());
-    }
-
-    public function actionBlockedList()
-    {
-        //
-    }
-
-    public function actionInactiveList()
-    {
-        //
+        return $this->render('give', [
+            'embed' => $embed
+        ]);
     }
 }
