@@ -11,5 +11,5 @@ $JW = <<<JS
     });
 JS;
 
-$this->registerJs($JW, ['position' => \yii\web\View::POS_END]);
+$this->registerJs($JW, ['depends' => [\zikwall\vktv\bundles\JWBundle::class]]);
 
