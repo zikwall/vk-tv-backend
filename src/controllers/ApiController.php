@@ -37,6 +37,6 @@ class ApiController extends Controller
             ->from('playlist')
             ->all();
 
-        return $playlists;
+        return $this->asJson($playlists);
     }
 }
