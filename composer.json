@@ -20,7 +20,8 @@
   ],
   "require": {
     "php": ">=7.1.0",
-    "zikwall/m3uparse": "dev-master"
+    "zikwall/m3uparse": "dev-master",
+    "firebase/php-jwt": "^5.0"
   },
   "autoload": {
     "psr-4": {
