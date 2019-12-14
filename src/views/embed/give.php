@@ -4,6 +4,13 @@
 $embed = $embed['url'];
 
 $JW = <<<JS
+    const random = (max) => {
+        return Math.floor(Math.random() * Math.floor(max));
+    };
+    
+    let adUrl = 'https://an.yandex.ru/meta/347075?imp-id=2&charset=UTF-8&target-ref=http%3A%2F%2Flimehd.ru&page-ref=http%3A%2F%2Flimehd.ru&rnd={random}';
+    adUrl = adUrl.replace('{random}', random(1, 4294967295), 'g');
+
     const player = jwplayer('jw');
     
     player.setup({
@@ -13,7 +20,7 @@ $JW = <<<JS
         mute: true,
         advertising: {
             client: 'vast',
-            tag: 'https://an.yandex.ru/meta/347075?imp-id=2&charset=UTF-8&target-ref=http%3A%2F%2Flimehd.ru&page-ref=http%3A%2F%2Flimehd.ru&rnd=1323233243'
+            tag: adUrl
         }
     });
     
