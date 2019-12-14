@@ -4,8 +4,9 @@
 $embed = $embed['url'];
 
 $JW = <<<JS
-    const random = (max) => {
-        return Math.floor(Math.random() * Math.floor(max));
+    const random = (min, max) => {
+        let rand = min - 0.5 + Math.random() * (max - min + 1);
+        return Math.round(rand);
     };
     
     let adUrl = 'https://an.yandex.ru/meta/347075?imp-id=2&charset=UTF-8&target-ref=http%3A%2F%2Flimehd.ru&page-ref=http%3A%2F%2Flimehd.ru&rnd={random}';
