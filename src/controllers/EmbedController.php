@@ -10,6 +10,40 @@ use yii\web\Response;
 
 class EmbedController extends Controller
 {
+    const PLAYER_JW = 1;
+    const PLAYER_OPENJS = 2;
+    const PLAYER_VIDEOJS = 3;
+    const PLAYER_PLYR = 4;
+
+    const PLAYER_VIEW = [
+        self::PLAYER_JW => '',
+        self::PLAYER_OPENJS => '_openplayer',
+    ];
+
+    const PLAYER_LAYOUT = [
+        self::PLAYER_JW => '',
+        self::PLAYER_OPENJS => '_openplayer'
+    ];
+
+    public static function getViewByPlayer($id)
+    {
+        $viewName = self::PLAYER_VIEW[$id];
+
+        return "give{$viewName}";
+    }
+
+    public static function getLayoutByPlayer($id)
+    {
+        $layoutName = self::PLAYER_LAYOUT[$id];
+
+        return "embed{$layoutName}";
+    }
+
+    public function setLayout($name)
+    {
+        $this->layout = $name;
+    }
+
     public $layout = 'embed';
 
     public function beforeAction($action)
@@ -32,8 +66,10 @@ class EmbedController extends Controller
         return true;
     }
 
-    public function actionGive(int $epg)
+    public function actionGive(int $epg, int $player = self::PLAYER_JW)
     {
+        $this->setLayout(self::getLayoutByPlayer($player));
+
         if (empty($epg)) {
             return \yii\base\InvalidArgumentException('Epg ID is required');
         }
@@ -55,7 +91,8 @@ class EmbedController extends Controller
             return \yii\web\NotFoundHttpException('Channed Not Found');
         }
 
-        return $this->render('give', [
+
+        return $this->render(self::getViewByPlayer($player), [
             'embed' => $embed
         ]);
     }
