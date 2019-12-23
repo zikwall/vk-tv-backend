@@ -8,15 +8,14 @@ class Password
 {
     public static function hash(string $password) : string
     {
-        return Yii::$app->security->generatePasswordHash($password, Yii::$app->getModule('user')->cost);
+        return Yii::$app->security->generatePasswordHash($password, Yii::$app->getModule('vktv')->cost);
     }
-
 
     public static function validate(string $password, string $hash) : bool
     {
         return Yii::$app->security->validatePassword($password, $hash);
     }
-
+    
     public static function generate(int $length) : string
     {
         $sets = [

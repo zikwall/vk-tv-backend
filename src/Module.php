@@ -14,7 +14,11 @@ class Module extends \yii\base\Module
 
     public $rememberFor = 1209600;
     public $enableConfirmation = false;
+    public $enableGeneratingPassword = false;
     public $enableUnconfirmedLogin = false;
+
+    // user
+    public $cost = 10;
 
     public function init()
     {

@@ -115,6 +115,10 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    /**
+     * @param bool $cached
+     * @return bool|null
+     */
     public function isSystemAdmin($cached = true)
     {
         if ($this->_isSystemAdmin === null || !$cached) {
@@ -133,6 +137,10 @@ class User extends ActiveRecord implements IdentityInterface
         return static::findOne($id);
     }
 
+    /**
+     * @param $token
+     * @param $type
+     */
     public static function loginByAccessToken($token, $type)
     {
         self::findIdentityByAccessToken($token, $type);
@@ -144,6 +152,34 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * @param $email
+     * @return null|static
+     */
+    public static function findByEmail($email)
+    {
+        return static::findOne(['email' => $email]);
+    }
+
+    /**
+     * @param $username
+     * @return null|static
+     */
+    public static function findByUsername($username)
+    {
+        return static::findOne(['username' => $username]);
+    }
+
+    /**
+     * @param $email
+     * @param $username
+     * @return null|static
+     */
+    public static function findByEmailOrUsername($email, $username)
+    {
+        return static::findOne(['email' => $email, 'username' => $username]);
+    }
+    
+    /**
      * @param string $authKey
      * @return bool
      */
@@ -151,15 +187,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->getAttribute('auth_key') === $authKey;
     }
-
-    /**
-     * @return bool Whether the user is blocked or not.
-     */
-    public function getIsBlocked()
-    {
-        return $this->blocked_at != null;
-    }
-
+    
     /**
      * @return bool Whether the user is an admin or not.
      */
@@ -170,6 +198,16 @@ class User extends ActiveRecord implements IdentityInterface
                 : false) || in_array($this->username, $this->getModule()->admins);
     }
 
+    public function isBlocked() : bool
+    {
+        return $this->blocked_at !== null;
+    }
+    
+    public function isDestroyed() : bool
+    {
+        return $this->is_destroy === 1 && $this->destroyed_at !== null;
+    }
+    
     public function getPermissionList() : array
     {
         $userPermissions = [];
@@ -245,20 +283,29 @@ class User extends ActiveRecord implements IdentityInterface
         if ($this->getIsNewRecord() == false) {
             throw new \RuntimeException('Calling "' . __CLASS__ . '::' . __METHOD__ . '" on existing user');
         }
-        $this->confirmed_at = $this->module->enableConfirmation ? null : time();
-        $this->password     = $this->module->enableGeneratingPassword ? Password::generate(8) : $this->password;
+        
+        $this->confirmed_at = $this->getModule()->enableConfirmation ? null : time();
+        $this->password     = $this->getModule()->enableGeneratingPassword ? Password::generate(8) : $this->password;
+        
+        $ip = Yii::$app->request->getUserIP();
+        
+        if ($ip !== null) {
+            $this->registration_ip = $ip;
+        }
+        
         $this->trigger(self::BEFORE_REGISTER);
+        
         if (!$this->save()) {
             return false;
         }
-        if ($this->module->enableConfirmation) {
-            /** @var Token $token */
-            $token = Yii::createObject(['class' => Token::className(), 'type' => Token::TYPE_CONFIRMATION]);
-            $token->link('user', $this);
+        
+        if ($this->getModule()->enableConfirmation) {
+           // confirm
         }
-        if(!InviteCode::invite($this)) {
-            throw new InvalidCallException('Invite not link to user!');
-        }
+        
+        //if(!InviteCode::invite($this)) {
+            // invite
+        //}
 
         // sendWelcomeMessage($this, $token);
 
@@ -296,13 +343,35 @@ class User extends ActiveRecord implements IdentityInterface
             'auth_key'   => Yii::$app->security->generateRandomString(),
         ]);
     }
-
+    
     /**
      * UnBlocks the user by setting 'blocked_at' field to null.
      */
     public function unblock()
     {
         return (bool)$this->updateAttributes(['blocked_at' => null]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function destroy()
+    {
+        return (bool)$this->updateAttributes([
+            'destroyed_at' => time(),
+            'is_destroy' => 1,
+        ]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function undestroy()
+    {
+        return (bool)$this->updateAttributes([
+            'destroyed_at' => null,
+            'is_destroy' => 0,
+        ]);
     }
 
     /**
@@ -340,8 +409,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return parent::beforeSave($insert);
     }
-
-
+    
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
