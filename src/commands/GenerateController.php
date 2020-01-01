@@ -10,7 +10,8 @@ use zikwall\m3uparse\Aggregation;
 use zikwall\m3uparse\parsers\{
     free\Free,
     freebesttv\FreeBestTv,
-    vasiliy78L\Base
+    vasiliy78L\Base,
+    forever\Forever
 };
 
 use vktv\models\Playlist;
@@ -32,7 +33,7 @@ class GenerateController extends Controller
     public function actionIndex()
     {
         $agg = new Aggregation(new \zikwall\m3uparse\Configuration());
-        $playlist = $agg->merge(new Base(), new FreeBestTv());
+        $playlist = $agg->merge(new Base(), new Forever(), new FreeBestTv());
 
         if (empty($playlist)) {
             return;
