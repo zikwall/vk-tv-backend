@@ -36,7 +36,7 @@ $JW = <<<JS
         file: '$embed',
         image: 'https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg',
         autostart: true,
-        mute: true,
+        mute: false,
         advertising: {
             client: 'vast',
             tag: adUrl
