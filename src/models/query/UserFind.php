@@ -7,6 +7,11 @@ use yii\db\ActiveRecord;
 
 class UserFind extends ActiveQuery
 {
+    public function isActive()
+    {
+        return $this->where(['is_destroyed' => 0]);
+    }
+    
     /**
      * @param $usernameOrEmail
      * @return array|\yii\db\ActiveRecord|null
