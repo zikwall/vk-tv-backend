@@ -1,7 +1,5 @@
 <?php
 
-namespace zikwall\vktv\migrations;
-
 use yii\db\Migration;
 
 class m200101_162754_add_image extends Migration
