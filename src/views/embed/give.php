@@ -34,7 +34,7 @@ $JW = <<<JS
     
     player.setup({
         file: '$embed',
-        image: 'https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg',
+        image: 'http://tv.zikwall.ru/web/images/backgrounds/fantasy.jpg',
         autostart: true,
         mute: false,
         advertising: {
