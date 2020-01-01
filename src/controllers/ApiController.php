@@ -18,7 +18,7 @@ class ApiController extends BaseController
          * - https
          */
         $playlists = (new Query())
-            ->select(['epg_id', 'name', 'url'])
+            ->select(['epg_id', 'name', 'url', 'image'])
             ->from('playlist')
             ->where(['and',
                 [
