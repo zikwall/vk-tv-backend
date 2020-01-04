@@ -57,6 +57,14 @@ class Auth
         'message' => 'An error occurred while registering, do not worry, we are already looking for a problem.',
     ];
 
+    const ERROR_EMAIL_NOT_FOUND = [
+        'code' => 7,
+        'message' => 'This email not found in Play database.',
+        'attributes' => [
+            'email'
+        ]
+    ];
+
     const SUCCESS_DESTROYED_ACCOUNT = [
         'code' => 101,
         'message' => 'Succsessfully delete account, Bye!',
@@ -70,5 +78,15 @@ class Auth
     const MESSAGE_USER_IS_DESTROYED = [
         'code' => 1002,
         'message' => 'Account is destroyed.'
+    ];
+
+    const MESSAGE_IS_UNAUTHORIZED = [
+        'code' => 1003,
+        'message' => 'User is not authorized!',
+    ];
+
+    const MESSAGE_SUCCESSUL_SEND_FORGOT_MESSAGE = [
+        'code' => 1004,
+        'message' => 'Instructions with further instructions were sent to the indicated email address. All the best for you!',
     ];
 }

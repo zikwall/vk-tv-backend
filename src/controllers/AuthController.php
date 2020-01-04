@@ -18,6 +18,30 @@ class AuthController extends BaseController
 {
     use ModuleTrait;
 
+    public function actionForgot()
+    {
+        if (Yii::$app->request->getIsOptions()) {
+            return true;
+        }
+
+        $post  = json_decode(Yii::$app->getRequest()->getRawBody(), true);
+        $email = $post['email'];
+
+
+        if (!AttributesValidator::isValidEmail($email)) {
+            return $this->response(Auth::ERROR_INVALID_EMAIL_ADRESS, 200);
+        }
+
+        if (!User::findByEmail($email)) {
+            return $this->response(Auth::ERROR_EMAIL_NOT_FOUND, 200);
+        }
+
+        return $this->response([
+            'code' => 200,
+            'response' => Auth::MESSAGE_SUCCESSUL_SEND_FORGOT_MESSAGE
+        ], 200);
+    }
+
     public function actionSignin()
     {
         if (Yii::$app->request->getIsOptions()) {
