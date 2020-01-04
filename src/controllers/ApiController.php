@@ -45,4 +45,15 @@ class ApiController extends BaseController
     {
         //
     }
+
+    public function actionFaq()
+    {
+        $faq = (new Query())
+            ->select(['question', 'answer'])
+            ->from('{{%faq}}')
+            ->where(['visible' => 1])
+            ->orderBy('order');
+
+        return $this->asJson($faq->all());
+    }
 }
