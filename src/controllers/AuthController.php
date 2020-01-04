@@ -209,7 +209,8 @@ class AuthController extends BaseController
             'email' => $user->email,
             'profile' => [
                 'name' => $user->profile->name,
-                'public_email' => $user->profile->public_email
+                'public_email' => $user->profile->public_email,
+                'avatar' => $user->profile->avatar
             ]
         ];
     }
