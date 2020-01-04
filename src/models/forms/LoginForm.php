@@ -55,13 +55,13 @@ class LoginForm extends Model
                 'username',
                 function ($attribute) {
                     if ($this->user !== null) {
-                        $confirmationRequired = $this->getModule()->enableConfirmation && !$this->getModule()->enableUnconfirmedLogin;
-                        if ($confirmationRequired && !$this->user->getIsConfirmed()) {
+                        //$confirmationRequired = $this->getModule()->enableConfirmation && !$this->getModule()->enableUnconfirmedLogin;
+                        /*if ($confirmationRequired && !$this->user->getIsConfirmed()) {
                             $this->addError($attribute, 'You need to confirm your email address');
                         }
                         if ($this->user->getIsBlocked()) {
                             $this->addError($attribute, 'Your account has been blocked');
-                        }
+                        }*/
                     }
                 }
             ],

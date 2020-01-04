@@ -28,15 +28,15 @@ class AuthController extends BaseController
         $user = static::authByUserAndPassword($post['username'], $post['password']);
 
         if ($user === null) {
-            return $this->response(Auth::ERROR_WRONG_USERNAME_OR_PASSWORD, 400);
+            return $this->response(Auth::ERROR_WRONG_USERNAME_OR_PASSWORD, 200);
         }
 
         if ($user->isBlocked()) {
-            return $this->response(Auth::MESSAGE_USER_IS_BLOCKED, 400);
+            return $this->response(Auth::MESSAGE_USER_IS_BLOCKED, 200);
         }
 
         if ($user->isDestroyed()) {
-            return $this->response(Auth::MESSAGE_USER_IS_DESTROYED, 400);
+            return $this->response(Auth::MESSAGE_USER_IS_DESTROYED, 200);
         }
 
         $jwt = $this->jwt($user);
@@ -61,23 +61,23 @@ class AuthController extends BaseController
         $password = $post['password'];
 
         if (!AttributesValidator::isValidPassword($password)) {
-            return $this->response(Auth::ERROR_INVALID_PASSWORD, 400);
+            return $this->response(Auth::ERROR_INVALID_PASSWORD, 200);
         }
 
         if (!AttributesValidator::isValidEmail($email)) {
-            return $this->response(Auth::ERROR_INVALID_EMAIL_ADRESS, 400);
+            return $this->response(Auth::ERROR_INVALID_EMAIL_ADRESS, 200);
         }
-        
+
         if (!AttributesValidator::isValidUsername($username)) {
-            return $this->response(Auth::ERROR_INVALID_USERNAME, 400);
+            return $this->response(Auth::ERROR_INVALID_USERNAME, 200);
         }
 
         if (User::findByEmail($email)) {
-            return $this->response(Auth::ERROR_EMAIL_ALREADY_USE, 400);
+            return $this->response(Auth::ERROR_EMAIL_ALREADY_USE, 200);
         }
 
         if (User::findByUsername($username)) {
-            return $this->response(Auth::ERROR_USERNAME_ALREADY_USE, 400);
+            return $this->response(Auth::ERROR_USERNAME_ALREADY_USE, 200);
         }
 
         // blacklists email
@@ -101,7 +101,7 @@ class AuthController extends BaseController
             ], 200);
         }
 
-        return $this->response(Auth::ERROR_FAILED_REGISTRATION, 400);
+        return $this->response(Auth::ERROR_FAILED_REGISTRATION, 200);
     }
 
     public function actionSelfDestroy()
@@ -117,13 +117,13 @@ class AuthController extends BaseController
         $password = $post['password'];
 
         // auth with jwt AND
-        
+
         $user = static::authByUserAndPassword($username, $password);
-        
+
         if ($user === null) {
-            return $this->response(Auth::ERROR_WRONG_USERNAME_OR_PASSWORD, 400);
+            return $this->response(Auth::ERROR_WRONG_USERNAME_OR_PASSWORD, 200);
         }
-        
+
         if ($user->destroy()) {
             return $this->response(Auth::SUCCESS_DESTROYED_ACCOUNT, 200);
         }
