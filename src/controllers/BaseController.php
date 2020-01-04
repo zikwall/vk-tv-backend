@@ -6,11 +6,15 @@ use vktv\models\User;
 use Yii;
 use Firebase\JWT\JWT;
 use yii\web\HttpException;
+use yii\web\IdentityInterface;
+use yii\web\Response;
 use zikwall\vktv\ModuleTrait;
 
 class BaseController extends \yii\rest\Controller
 {
     use ModuleTrait;
+
+    public $user = null;
 
     public function beforeAction($action) : bool
     {
@@ -84,5 +88,21 @@ class BaseController extends \yii\rest\Controller
         }
 
         return null;
+    }
+
+    public function response(array $content, int $status) : Response
+    {
+        Yii::$app->response->statusCode = $status;
+        return $this->asJson($content);
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function isUnauthtorized()
+    {
+        return $this->getUser() === null && !($this->getUser() instanceof IdentityInterface);
     }
 }

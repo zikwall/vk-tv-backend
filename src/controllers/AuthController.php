@@ -66,6 +66,7 @@ class AuthController extends BaseController
         $jwt = $this->jwt($user);
 
         return $this->response([
+            'code' => 200,
             'token' => $jwt['token'],
             'token_expired' => $jwt['payload']['exp'],
             'user' => $this->getUserAttributes($user)
@@ -119,6 +120,7 @@ class AuthController extends BaseController
             $jwt = $this->jwt($user);
 
             return $this->response([
+                'code' => 200,
                 'token' => $jwt['token'],
                 'token_expired' => $jwt['payload']['exp'],
                 'user' => $this->getUserAttributes($user)
@@ -210,11 +212,5 @@ class AuthController extends BaseController
                 'public_email' => $user->profile->public_email
             ]
         ];
-    }
-
-    public function response(array $content, int $status) : Response
-    {
-        Yii::$app->response->statusCode = $status;
-        return $this->asJson($content);
     }
 }
