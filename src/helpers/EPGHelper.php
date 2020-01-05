@@ -38,7 +38,8 @@ class EPGHelper
         return [
             'time'        => date('h:i', $epgItem['start']),
             'name'        => $epgItem['title'],
-            'description' => $epgItem['desc']
+            'description' => $epgItem['desc'],
+            'is_active'   => $epgItem['start'] < time() && $epgItem['stop'] > time()
         ];
     }
 }
