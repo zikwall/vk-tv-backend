@@ -32,7 +32,7 @@ class FakeController extends BaseController
             $days[] = [
                 'timestamp' => $computedTimestamp,
                 'title' => $humanDate,
-                'data' => Faker::fullDayEpg()
+                'data' => Faker::fullDayEpg($humanDate)
             ];
         }
 
