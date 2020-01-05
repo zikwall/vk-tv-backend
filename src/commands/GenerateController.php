@@ -58,7 +58,7 @@ class GenerateController extends Controller
     public function actionEpgXmltv()
     {
         // TODO delete only XMLTV
-        Epg::deleteAll();
+        Epg::deleteAll(['>', 'day_begin', strtotime('+5 day')]);
 
         $channels = ArrayHelper::getColumn(
             Playlist::find()->select(['xmltv_id'])->where(['is not', 'xmltv_id', null])->asArray()->all(),
