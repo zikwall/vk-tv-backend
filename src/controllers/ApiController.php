@@ -66,16 +66,17 @@ class ApiController extends BaseController
         foreach ($epgList as $item) {
             $day = date('d-m-Y', $item['day_begin']);
 
-            if ($day == date('d-m-Y')) {
-                $activeIndex = $counter;
-            }
-
             if (!isset($epgResponse[$day])) {
                 $epgResponse[$day] = EPGHelper::createDay($item);
+
+                if ($day == date('d-m-Y')) {
+                    $activeIndex = $counter;
+                }
+
+                $counter++;
             }
 
             $epgResponse[$day]['data'][] = EPGHelper::createProgramm($item);
-            $counter++;
         }
 
         if (count($epgResponse) === 0) {
