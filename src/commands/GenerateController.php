@@ -2,6 +2,7 @@
 
 namespace zikwall\vktv\commands;
 
+use vktv\models\Epg;
 use Yii;
 use yii\console\Controller;
 use yii\helpers\ArrayHelper;
@@ -56,6 +57,9 @@ class GenerateController extends Controller
 
     public function actionEpgXmltv()
     {
+        // TODO delete only XMLTV
+        Epg::deleteAll();
+
         $channels = ArrayHelper::getColumn(
             Playlist::find()->select(['xmltv_id'])->where(['is not', 'xmltv_id', null])->asArray()->all(),
             'xmltv_id'
