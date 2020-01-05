@@ -6,7 +6,7 @@ namespace vktv\models;
 
 class Faker
 {
-    public static function fullDayEpg(string $date)
+    public static function fullDayEpg(string $date, int $epgId)
     {
         $epg = [];
 
@@ -15,7 +15,7 @@ class Faker
 
             $epg[] = [
                 'time' => $hour . ':00 - ' . $hour . ':59',
-                'name' => 'Example TV Program ' . $date,
+                'name' => 'Example TV Program ' . $epgId . $date,
                 'description' => 'Non description'
             ];
         };

@@ -8,7 +8,7 @@ use vktv\models\Faker;
 
 class FakeController extends BaseController
 {
-    public function actionEpg(string $currentDay = null)
+    public function actionEpg(int $epgId, string $currentDay = null)
     {
         // for web
         if (Yii::$app->request->getIsOptions()) {
@@ -32,7 +32,7 @@ class FakeController extends BaseController
             $days[] = [
                 'timestamp' => $computedTimestamp,
                 'title' => $humanDate,
-                'data' => Faker::fullDayEpg($humanDate)
+                'data' => Faker::fullDayEpg($humanDate, $epgId)
             ];
         }
 
