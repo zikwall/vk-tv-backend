@@ -8,6 +8,10 @@ class Date
     {
         $date = date('d-m-Y', $timestamp);
 
+        if($date == date('d-m-Y',time() + (24 * 3 * 60 * 60))) {
+            return 'Послепослезавтра';
+        }
+
         if($date == date('d-m-Y',time() + (24 * 2 * 60 * 60))) {
             return 'Послезавтра';
         }
@@ -26,6 +30,10 @@ class Date
 
         if($date == date('d-m-Y',time() - (24 * 2 * 60 * 60))) {
             return 'Позавчера';
+        }
+
+        if($date == date('d-m-Y',time() - (24 * 3 * 60 * 60))) {
+            return 'Позапозавчера';
         }
 
         return $date;
