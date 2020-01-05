@@ -2,6 +2,7 @@
 
 namespace zikwall\vktv\controllers;
 
+use vktv\helpers\EPGHelper;
 use Yii;
 use yii\db\Query;
 use yii\web\Response;
@@ -44,6 +45,44 @@ class ApiController extends BaseController
     public function actionInactiveList()
     {
         //
+    }
+
+    public function actionEpg(int $id, int $provider = 10)
+    {
+        $providerName = EPGHelper::resolveEPGProvider($provider);
+
+        $epgList = (new Query())
+            ->select(['title', 'desc', 'start', 'stop', 'day_begin'])
+            ->from('{{%epg}}')
+            //->where([$providerName => $id])
+            ->where(['epg_id' => $id])
+            ->orderBy('day_begin')
+            ->all();
+
+        $epgResponse = [];
+        $counter = 0;
+        $activeIndex = 0;
+
+        foreach ($epgList as $item) {
+            $day = date('d-m-Y', $item['day_begin']);
+
+            if ($day == date('d-m-Y')) {
+                $activeIndex = $counter;
+            }
+
+            if (!isset($epgResponse[$day])) {
+                $epgResponse[$day] = EPGHelper::createDay($item);
+            }
+
+            $epgResponse[$day]['data'][] = EPGHelper::createProgramm($item);
+            $counter++;
+        }
+
+        if (count($epgResponse) === 0) {
+            return $this->asJson(['active' => $activeIndex, 'data' => []]);
+        }
+
+        return $this->asJson(['active' => $activeIndex, 'data' => array_values($epgResponse)]);
     }
 
     public function actionFaq()
