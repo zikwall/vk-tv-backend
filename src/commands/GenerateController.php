@@ -2,6 +2,8 @@
 
 namespace zikwall\vktv\commands;
 
+use vktv\helpers\Category;
+use vktv\helpers\PlaylistHelper;
 use vktv\models\Epg;
 use Yii;
 use yii\console\Controller;
@@ -49,9 +51,23 @@ class GenerateController extends Controller
 
         Playlist::deleteAll();
 
-        Yii::$app->db->createCommand()->batchInsert('{{playlist}}',
-            ['epg_id', 'name', 'url', 'ssl', 'image', 'use_origin', 'xmltv_id'],
-            $playlist
+        $sanitizedPlaylist = [];
+        foreach ($playlist as $pl) {
+            $sanitizedPlaylist[] = [
+                'epg_id'        => $pl['epg_id'],
+                'name'          => $pl['name'],
+                'url'           => $pl['url'],
+                'ssl'           => $pl['ssl'],
+                'image'         => $pl['image'] ? PlaylistHelper::createImage($pl['image']) : null,
+                'use_origin'    => $pl['use_origin'],
+                'xmltv_id'      => $pl['xmltv_id'],
+                'category'      => $pl['category'] ?? Category::getDefaultCategory()
+            ];
+        }
+
+        Yii::$app->db->createCommand()->batchInsert('{{%playlist}}',
+            ['epg_id', 'name', 'url', 'ssl', 'image', 'use_origin', 'xmltv_id', 'category'],
+            $sanitizedPlaylist
         )->execute();
     }
 
@@ -71,12 +87,11 @@ class GenerateController extends Controller
         foreach ($epgs as $epg) {
             foreach ($epg as $programs) {
 
-                $cleanEpg = [];
-
+                $sanitizedEpg = [];
                 foreach ($programs as $program) {
                     unset($program['day_begin_human']);
 
-                    $cleanEpg[] = [
+                    $sanitizedEpg[] = [
                         'day_begin' => $program['day_begin'],
                         'tz'        => $program['tz'],
                         'start'     => $program['start'],
@@ -89,7 +104,7 @@ class GenerateController extends Controller
 
                 Yii::$app->db->createCommand()->batchInsert('{{%epg}}',
                     ['day_begin', 'tz', 'start', 'stop', 'title', 'desc', 'epg_id'],
-                    $cleanEpg
+                    $sanitizedEpg
                 )->execute();
             }
         }

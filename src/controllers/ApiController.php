@@ -2,6 +2,7 @@
 
 namespace zikwall\vktv\controllers;
 
+use vktv\helpers\Category;
 use vktv\helpers\EPGHelper;
 use Yii;
 use yii\db\Query;
@@ -9,8 +10,14 @@ use yii\web\Response;
 
 class ApiController extends BaseController
 {
-    public function actionChannels(int $useHttp = 0)
+    public function actionChannels(int $useHttp = 0, int $withGrouped = 1)
     {
+        $selectFileds = ['epg_id', 'name', 'url', 'image', 'use_origin', 'xmltv_id'];
+
+        if ($withGrouped === 1) {
+            $selectFileds = array_merge($selectFileds, ['category']);
+        }
+
         /**
          * TODO Create Cache Layer
          *
@@ -19,7 +26,7 @@ class ApiController extends BaseController
          * - https
          */
         $playlists = (new Query())
-            ->select(['epg_id', 'name', 'url', 'image', 'use_origin', 'xmltv_id'])
+            ->select($selectFileds)
             ->from('playlist')
             ->where(['and',
                 [
@@ -34,7 +41,34 @@ class ApiController extends BaseController
             $playlists->andWhere(['ssl' => 1]);
         }
 
-        return $this->asJson($playlists->all());
+        if ($withGrouped === 0) {
+            return $this->asJson($playlists->all());
+        }
+
+        $groupedResponse = [];
+
+
+        foreach (Category::getList() as $id => $category) {
+            $groupedResponse[$id] = [
+                'title' => $category,
+                'data' => []
+            ];
+        }
+
+        foreach ($playlists->all() as $playlist) {
+            $plSanitize = [
+                'epg_id'        => $playlist['epg_id'],
+                'name'          => $playlist['name'],
+                'url'           => $playlist['url'],
+                'image'         => $playlist['image'],
+                'use_origin'    => $playlist['use_origin'],
+                'xmltv_id'      => $playlist['xmltv_id'],
+            ];
+
+            $groupedResponse[(int) $playlist['category']]['data'][] = $plSanitize;
+        }
+
+        return $this->asJson(array_values($groupedResponse));
     }
 
     public function actionBlockedList()
@@ -55,7 +89,8 @@ class ApiController extends BaseController
             ->select(['title', 'desc', 'start', 'stop', 'day_begin'])
             ->from('{{%epg}}')
             //->where([$providerName => $id])
-            ->where(['epg_id' => $id])
+            ->where(['<=', 'day_begin', strtotime('+3 day')])
+            ->andWhere(['epg_id' => $id])
             ->orderBy('day_begin')
             ->all();
 
