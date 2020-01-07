@@ -74,7 +74,7 @@ class ApiController extends BaseController
         $providerName = EPGHelper::resolveEPGProvider($provider);
 
         $epgList = (new Query())
-            ->select(['title', 'desc', 'start', 'stop', 'day_begin'])
+            ->select(['title', 'start', 'stop', 'day_begin'])
             ->from('{{%epg}}')
             //->where([$providerName => $id])
             ->where(['>=', 'day_begin', strtotime('-3 day')])
