@@ -1,3 +1,18 @@
+<div align="center">
+  <h1>TV Service Backend</h1>
+  <h4>Make easy</h4>
+  <h5>This is a full-featured module for creating applications and sites designed for television broadcasting.</h5>
+</div>
+
+## End[points]
+
+* [Login](endpoints/Login.md) : `POST /vktv/auth/signin`
+* [Login](endpoints/Register.md) : `POST /vktv/auth/signup`
+* [Login](endpoints/Forgot.md) : `POST /vktv/auth/forgot`
+* [API Channels](endpoints/API_Channels.md) : `GET /vktv/api/channels`
+* [API EPG](endpoints/API_EPG.md) : `GET /vktv/api/epg`
+* [API FAQ](endpoints/API_FAQ.md) : `GET /vktv/auth/faq`
+* [WEB Embed Give](endpoints/WEB_Embed_Give.md) : `GET /vktv/embed/give`
 
 ## Installation
 
