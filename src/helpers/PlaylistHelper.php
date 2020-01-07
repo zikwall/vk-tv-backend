@@ -4,12 +4,12 @@ namespace vktv\helpers;
 
 
 class PlaylistHelper
-{   
+{
     public static function createImage(string $url) : string
     {
         return sprintf('http://tv.zikwall.ru/images/logo/%s.png', $url);
     }
-    
+
     public static function makeGroup(string $title) : array
     {
         return [
@@ -17,7 +17,7 @@ class PlaylistHelper
             'data' => []
         ];
     }
-    
+
     public static function sanitizeItem(array $playlist, bool $useCategoty = false) : array
     {
         $pl = [
@@ -28,11 +28,11 @@ class PlaylistHelper
             'use_origin'    => $playlist['use_origin'],
             'xmltv_id'      => $playlist['xmltv_id'],
         ];
-        
+
         if ($useCategoty) {
-            $pl['categoty'] = Category::getName($playlist['category']);
+            $pl['category'] = Category::getName($playlist['category']);
         }
-        
+
         return $pl;
     }
 }
