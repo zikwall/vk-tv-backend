@@ -58,6 +58,5 @@
 
 #### Console App
 
-1. Run parse and store to DB playlists: `php yii vktv/generate`
-
-
+1. Scan and load playlists into the database, run: `php yii vktv/generate`
+2. Scan and add TV programs to the database from XMLTV, run: `php yii vktv/generate/epg-xmltv`
