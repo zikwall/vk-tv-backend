@@ -7,8 +7,8 @@
 ## End[points]
 
 * [Login](endpoints/Login.md) : `POST /vktv/auth/signin`
-* [Login](endpoints/Register.md) : `POST /vktv/auth/signup`
-* [Login](endpoints/Forgot.md) : `POST /vktv/auth/forgot`
+* [Register](endpoints/Register.md) : `POST /vktv/auth/signup`
+* [Forgot](endpoints/Forgot.md) : `POST /vktv/auth/forgot`
 * [API Channels](endpoints/API_Channels.md) : `GET /vktv/api/channels`
 * [API EPG](endpoints/API_EPG.md) : `GET /vktv/api/epg`
 * [API FAQ](endpoints/API_FAQ.md) : `GET /vktv/auth/faq`
