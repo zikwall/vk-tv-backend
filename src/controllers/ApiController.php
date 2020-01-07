@@ -77,7 +77,8 @@ class ApiController extends BaseController
             ->select(['title', 'desc', 'start', 'stop', 'day_begin'])
             ->from('{{%epg}}')
             //->where([$providerName => $id])
-            ->where(['<=', 'day_begin', strtotime('+3 day')])
+            ->where(['>=', 'day_begin', strtotime('-3 day')])
+            ->andWhere(['<=', 'day_begin', strtotime('+3 day')])
             ->andWhere(['epg_id' => $id])
             ->orderBy('day_begin')
             ->all();
