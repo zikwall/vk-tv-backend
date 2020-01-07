@@ -3,6 +3,7 @@
 namespace zikwall\vktv\controllers;
 
 use vktv\helpers\Category;
+use vktv\helpers\Date;
 use vktv\helpers\EPGHelper;
 use vktv\helpers\PlaylistHelper;
 use Yii;
@@ -69,6 +70,36 @@ class ApiController extends BaseController
         //
     }
 
+    public function actionEpgDescription(int $id)
+    {
+        $currentTime = Date::fix900seconds(time());
+
+        $epg = (new Query())
+            ->select(['desc', 'title', 'start', 'stop'])
+            ->from('{{%epg}}')
+            ->where(['>=', 'day_begin', mktime(0, 0, 0)])
+            ->andWhere(['epg_id' => $id])
+            ->andWhere([
+                'and',
+                ['<=', 'start', $currentTime],
+                ['>=', 'stop', $currentTime]
+            ])
+            ->orderBy('day_begin')
+            ->one();
+
+        if (!$epg) {
+            return $this->asJson([
+                'status' => 100,
+                'data' => []
+            ]);
+        }
+
+        return $this->asJson([
+            'status' => 200,
+            'data' => EPGHelper::createProgramm($epg)
+        ]);
+    }
+
     public function actionEpg(int $id, int $provider = 10)
     {
         $providerName = EPGHelper::resolveEPGProvider($provider);
@@ -77,8 +108,7 @@ class ApiController extends BaseController
             ->select(['title', 'start', 'stop', 'day_begin'])
             ->from('{{%epg}}')
             //->where([$providerName => $id])
-            ->where(['>=', 'day_begin', strtotime('-3 day')])
-            ->andWhere(['<=', 'day_begin', strtotime('+3 day')])
+            ->where(['<=', 'day_begin', strtotime('+3 day')])
             ->andWhere(['epg_id' => $id])
             ->orderBy('day_begin')
             ->all();

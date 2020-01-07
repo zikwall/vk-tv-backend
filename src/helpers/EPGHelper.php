@@ -35,11 +35,13 @@ class EPGHelper
 
     public static function createProgramm(array $epgItem) : array
     {
+        $currentTime = Date::fix900seconds(time());
+
         return [
-            'time'        => date('h:i', $epgItem['start']),
+            'time'        => date('H:i', $epgItem['start']),
             'name'        => $epgItem['title'],
             'description' => $epgItem['desc'],
-            'is_active'   => $epgItem['start'] > time() && $epgItem['stop'] < time()
+            'is_active'   => Date::beetweenTimestampes($currentTime, (int) $epgItem['start'], (int) $epgItem['stop']),
         ];
     }
 }
