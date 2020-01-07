@@ -4,6 +4,7 @@ namespace zikwall\vktv\controllers;
 
 use vktv\helpers\Category;
 use vktv\helpers\EPGHelper;
+use vktv\helpers\PlaylistHelper;
 use Yii;
 use yii\db\Query;
 use yii\web\Response;
@@ -12,12 +13,6 @@ class ApiController extends BaseController
 {
     public function actionChannels(int $useHttp = 0, int $withGrouped = 1)
     {
-        $selectFileds = ['epg_id', 'name', 'url', 'image', 'use_origin', 'xmltv_id'];
-
-        if ($withGrouped === 1) {
-            $selectFileds = array_merge($selectFileds, ['category']);
-        }
-
         /**
          * TODO Create Cache Layer
          *
@@ -26,7 +21,7 @@ class ApiController extends BaseController
          * - https
          */
         $playlists = (new Query())
-            ->select($selectFileds)
+            ->select(['epg_id', 'name', 'url', 'image', 'use_origin', 'xmltv_id', 'category'])
             ->from('playlist')
             ->where(['and',
                 [
@@ -42,30 +37,23 @@ class ApiController extends BaseController
         }
 
         if ($withGrouped === 0) {
-            return $this->asJson($playlists->all());
+            $response = [];
+
+            foreach ($playlists->all() as $playlist) {
+                $response[] = PlaylistHelper::sanitizeItem($playlist, true);
+            }
+
+            return $this->asJson($response);
         }
 
         $groupedResponse = [];
 
-
         foreach (Category::getList() as $id => $category) {
-            $groupedResponse[$id] = [
-                'title' => $category,
-                'data' => []
-            ];
+            $groupedResponse[$id] = PlaylistHelper::makeGroup($category);
         }
 
         foreach ($playlists->all() as $playlist) {
-            $plSanitize = [
-                'epg_id'        => $playlist['epg_id'],
-                'name'          => $playlist['name'],
-                'url'           => $playlist['url'],
-                'image'         => $playlist['image'],
-                'use_origin'    => $playlist['use_origin'],
-                'xmltv_id'      => $playlist['xmltv_id'],
-            ];
-
-            $groupedResponse[(int) $playlist['category']]['data'][] = $plSanitize;
+            $groupedResponse[(int) $playlist['category']]['data'][] = PlaylistHelper::sanitizeItem($playlist);;
         }
 
         return $this->asJson(array_values($groupedResponse));
