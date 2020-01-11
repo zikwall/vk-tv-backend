@@ -38,6 +38,6 @@ class AttributesValidator
             return false;
         }
 
-        return preg_match('/^[a-zA-Z]+(([\',. -][a-zA-Z ])?[a-zA-Z]*)*$/g', $name);
+        return preg_match('/^[a-zA-Z]+(([\',. -][a-zA-Z ])?[a-zA-Z]*)*$', $name);
     }
 }

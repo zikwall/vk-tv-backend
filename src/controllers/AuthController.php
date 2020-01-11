@@ -53,7 +53,17 @@ class AuthController extends BaseController
         return $this->response([
             'code' => 200,
             'response' => [
-                'message' => 'Successfully!'
+                'message' => 'Successfully!',
+                'user' => [
+                    'id' => $this->getUser()->id,
+                    'username' => $this->getUser()->username,
+                    'email' => $this->getUser()->email,
+                    'profile' => [
+                        'name' => $this->getUser()->profile->name,
+                        'public_email' => $this->getUser()->profile->public_email,
+                        'avatar' => $this->getUser()->profile->avatar
+                    ]
+                ]
             ]
         ], 200);
     }
