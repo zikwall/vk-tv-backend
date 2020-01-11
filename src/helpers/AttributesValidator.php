@@ -4,7 +4,7 @@ namespace vktv\helpers;
 
 class AttributesValidator
 {
-    public static function isValidPassword(string $password) : bool 
+    public static function isValidPassword(string $password) : bool
     {
         if (strlen($password) < 8) {
             return false;
@@ -17,18 +17,27 @@ class AttributesValidator
 
         return true;
     }
-    
+
     public static function isValidEmail(string $email) : bool
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
-    
-    public static function isValidUsername(string $username) : bool 
+
+    public static function isValidUsername(string $username) : bool
     {
         if (strlen($username) < 5 || strlen($username) > 20) {
             return false;
         }
-        
+
         return preg_match('/^[a-zA-Z0-9]{5,20}$/', $username);
+    }
+
+    public static function isValidRealName(string $name) : bool
+    {
+        if (strlen($name) < 2 || strlen($name) > 30) {
+            return false;
+        }
+
+        return preg_match('/^[a-zA-Z]+(([\',. -][a-zA-Z ])?[a-zA-Z]*)*$/g', $name);
     }
 }

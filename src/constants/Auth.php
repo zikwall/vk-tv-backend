@@ -65,6 +65,14 @@ class Auth
         ]
     ];
 
+    const ERROR_INVALID_NAME = [
+        'code' => 8,
+        'message' => 'Incorrect name. The name may contain letters of the Latin alphabet and a separator in the form of a space, see for yourself [a-zA-Z\',.-]',
+        'attributes' => [
+            'name'
+        ]
+    ];
+
     const SUCCESS_DESTROYED_ACCOUNT = [
         'code' => 101,
         'message' => 'Succsessfully delete account, Bye!',
@@ -88,5 +96,15 @@ class Auth
     const MESSAGE_SUCCESSUL_SEND_FORGOT_MESSAGE = [
         'code' => 1004,
         'message' => 'Instructions with further instructions were sent to the indicated email address. All the best for you!',
+    ];
+
+    const MESSAGE_USER_ALREADY_CONFIRMED_SINGUP = [
+        'code' => 1005,
+        'message' => 'It seems you have already passed this stage...',
+    ];
+
+    const MESSAGE_USER_AFTER_REGISTRATION_FAILED = [
+        'code' => 1006,
+        'message' => 'Failed to update data, please do it in the settings yourself',
     ];
 }

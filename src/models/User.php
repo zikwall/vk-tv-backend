@@ -178,7 +178,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return static::findOne(['email' => $email, 'username' => $username]);
     }
-    
+
     /**
      * @param string $authKey
      * @return bool
@@ -187,7 +187,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->getAttribute('auth_key') === $authKey;
     }
-    
+
     /**
      * @return bool Whether the user is an admin or not.
      */
@@ -202,12 +202,12 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->blocked_at !== null;
     }
-    
+
     public function isDestroyed() : bool
     {
         return $this->is_destroy === 1 && $this->destroyed_at !== null;
     }
-    
+
     public function getPermissionList() : array
     {
         $userPermissions = [];
@@ -283,28 +283,28 @@ class User extends ActiveRecord implements IdentityInterface
         if ($this->getIsNewRecord() == false) {
             throw new \RuntimeException('Calling "' . __CLASS__ . '::' . __METHOD__ . '" on existing user');
         }
-        
-        $this->confirmed_at = $this->getModule()->enableConfirmation ? null : time();
+
+        $this->confirmed_at = null;
         $this->password     = $this->getModule()->enableGeneratingPassword ? Password::generate(8) : $this->password;
-        
+
         $ip = Yii::$app->request->getUserIP();
-        
+
         if ($ip !== null) {
             $this->registration_ip = $ip;
         }
-        
+
         $this->trigger(self::BEFORE_REGISTER);
-        
+
         if (!$this->save()) {
             return false;
         }
-        
+
         if ($this->getModule()->enableConfirmation) {
-           // confirm
+            // confirm
         }
-        
+
         //if(!InviteCode::invite($this)) {
-            // invite
+        // invite
         //}
 
         // sendWelcomeMessage($this, $token);
@@ -343,7 +343,7 @@ class User extends ActiveRecord implements IdentityInterface
             'auth_key'   => Yii::$app->security->generateRandomString(),
         ]);
     }
-    
+
     /**
      * UnBlocks the user by setting 'blocked_at' field to null.
      */
@@ -372,6 +372,36 @@ class User extends ActiveRecord implements IdentityInterface
             'destroyed_at' => null,
             'is_destroy' => 0,
         ]);
+    }
+
+    public function isAlreadyConfirmed() : bool
+    {
+        return $this->confirmed_at !== null;
+    }
+
+    public function afterRegistrationHandle($name, $publicEmail)
+    {
+        if (empty($name) || empty($publicEmail)) {
+            return false;
+        }
+
+        $profile = Profile::find()->where([
+            'user_id' => $this->id
+        ])->one();
+
+        if (!$profile) {
+            $profile = new Profile();
+            $profile->user_id = $this->id;
+        }
+
+        $profile->name = $name;
+        $profile->public_email = $publicEmail;
+
+        if (!$profile->save()) {
+            return false;
+        }
+
+        return $this->confirm();
     }
 
     /**
@@ -409,7 +439,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return parent::beforeSave($insert);
     }
-    
+
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);

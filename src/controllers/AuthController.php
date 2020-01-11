@@ -18,6 +18,41 @@ class AuthController extends BaseController
 {
     use ModuleTrait;
 
+    public function actionContinueSignup()
+    {
+        if (Yii::$app->request->getIsOptions()) {
+            return true;
+        }
+
+        $post  = json_decode(Yii::$app->getRequest()->getRawBody(), true);
+        $name       = $post['name'];
+        $publiEmail = $post['publicEmail'];
+        //$avatar     = $post['photo'];
+        //$token      = $post['token'];
+
+        if ($this->isUnauthtorized()) {
+            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
+        }
+
+        if ($this->getUser()->isAlreadyConfirmed()) {
+            return $this->response(Auth::MESSAGE_USER_ALREADY_CONFIRMED_SINGUP, 200);
+        }
+
+        if (!AttributesValidator::isValidEmail($email)) {
+            return $this->response(Auth::ERROR_INVALID_EMAIL_ADRESS, 200);
+        }
+
+        if (!AttributesValidator::isValidRealName($name)) {
+            return $this->response(Auth::ERROR_INVALID_NAME, 200);
+        }
+
+        if (!$this->getUser()->afterRegistrationHandle($name, $publiEmail)) {
+            return $this->response(Auth::MESSAGE_USER_AFTER_REGISTRATION_FAILED, 200);
+        }
+
+        return $this->response([], 200);
+    }
+
     public function actionForgot()
     {
         if (Yii::$app->request->getIsOptions()) {
@@ -47,6 +82,8 @@ class AuthController extends BaseController
         if (Yii::$app->request->getIsOptions()) {
             return true;
         }
+
+        $this->disableAuthorization();
 
         $post = json_decode(Yii::$app->getRequest()->getRawBody(), true);
         $user = static::authByUserAndPassword($post['username'], $post['password']);
@@ -79,6 +116,8 @@ class AuthController extends BaseController
             return true;
         }
 
+        $this->disableAuthorization();
+
         $post = json_decode(Yii::$app->getRequest()->getRawBody(), true);
 
         $email    = $post['email'];
@@ -108,6 +147,9 @@ class AuthController extends BaseController
         // blacklists email
         // registration off
 
+        /**
+         * @var $user User
+         */
         $user = Yii::createObject([
             'class'    => User::class,
             'scenario' => 'create',

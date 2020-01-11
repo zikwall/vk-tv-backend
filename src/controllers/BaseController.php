@@ -15,6 +15,7 @@ class BaseController extends \yii\rest\Controller
     use ModuleTrait;
 
     public $user = null;
+    protected $enableAuthorization = true;
 
     public function beforeAction($action) : bool
     {
@@ -34,19 +35,21 @@ class BaseController extends \yii\rest\Controller
         Yii::$app->response->headers->set('Access-Control-Allow-Credentials', true);
         Yii::$app->response->headers->set('Access-Control-Max-Age', 86400);
 
-        $user = $this->authWithJwt();
+        if ($this->isEnabledAuthorization()) {
+            $user = $this->authWithJwt();
 
-        if ($user === null && $this->getModule()->enableBasicAuth) {
-            list($username, $password) = Yii::$app->request->getAuthCredentials();
-            $user = AuthController::authByUserAndPassword($username, $password);
+            if ($user === null && $this->getModule()->enableBasicAuth) {
+                list($username, $password) = Yii::$app->request->getAuthCredentials();
+                $user = AuthController::authByUserAndPassword($username, $password);
+            }
         }
 
         //if ($user === null) {
-            //throw new HttpException('401', 'Invalid token!');
+        //throw new HttpException('401', 'Invalid token!');
         //}
 
         //if ($this->isUserDisabled($user)) {
-            //throw new HttpException('401', 'Invalid user!');
+        //throw new HttpException('401', 'Invalid user!');
         //}
 
         /**
@@ -96,13 +99,28 @@ class BaseController extends \yii\rest\Controller
         return $this->asJson($content);
     }
 
-    public function getUser()
+    public function getUser() : User
     {
         return $this->user;
     }
 
-    public function isUnauthtorized()
+    public function isUnauthtorized() : bool
     {
         return $this->getUser() === null && !($this->getUser() instanceof IdentityInterface);
+    }
+
+    public function enableAuthorization() : void
+    {
+        $this->enableAuthorization = true;
+    }
+
+    public function disableAuthorization() : void
+    {
+        $this->enableAuthorization = false;
+    }
+
+    public function isEnabledAuthorization() : bool
+    {
+        return $this->enableAuthorization === true;
     }
 }
