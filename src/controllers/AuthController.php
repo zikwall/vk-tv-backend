@@ -38,7 +38,7 @@ class AuthController extends BaseController
             return $this->response(Auth::MESSAGE_USER_ALREADY_CONFIRMED_SINGUP, 200);
         }
 
-        if (!AttributesValidator::isValidEmail($email)) {
+        if (!AttributesValidator::isValidEmail($publiEmail)) {
             return $this->response(Auth::ERROR_INVALID_EMAIL_ADRESS, 200);
         }
 
@@ -50,7 +50,12 @@ class AuthController extends BaseController
             return $this->response(Auth::MESSAGE_USER_AFTER_REGISTRATION_FAILED, 200);
         }
 
-        return $this->response([], 200);
+        return $this->response([
+            'code' => 200,
+            'response' => [
+                'message' => 'Successfully!'
+            ]
+        ], 200);
     }
 
     public function actionForgot()
