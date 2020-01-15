@@ -42,7 +42,7 @@ class ApiController extends BaseController
 
             foreach ($playlists->all() as $playlist) {
                 if ($byKeys === 1) {
-                    $response[$playlist['epg_id']][] = PlaylistHelper::sanitizeItem($playlist, true);
+                    $response[$playlist['epg_id']] = PlaylistHelper::sanitizeItem($playlist, true);
                 } else {
                     $response[] = PlaylistHelper::sanitizeItem($playlist, true);
                 }
