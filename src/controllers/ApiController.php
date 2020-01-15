@@ -12,7 +12,7 @@ use yii\web\Response;
 
 class ApiController extends BaseController
 {
-    public function actionChannels(int $useHttp = 0, int $withGrouped = 1)
+    public function actionChannels(int $useHttp = 0, int $withGrouped = 1, int $byKeys = 0)
     {
         /**
          * TODO Create Cache Layer
@@ -41,7 +41,11 @@ class ApiController extends BaseController
             $response = [];
 
             foreach ($playlists->all() as $playlist) {
-                $response[] = PlaylistHelper::sanitizeItem($playlist, true);
+                if ($byKeys === 1) {
+                    $response[$playlist['epg_id']] = PlaylistHelper::sanitizeItem($playlist, true);
+                } else {
+                    $response[] = PlaylistHelper::sanitizeItem($playlist, true);
+                }
             }
 
             return $this->asJson($response);
