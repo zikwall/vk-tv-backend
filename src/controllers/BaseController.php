@@ -99,7 +99,7 @@ class BaseController extends \yii\rest\Controller
         return $this->asJson($content);
     }
 
-    public function getUser() : User
+    public function getUser()
     {
         return $this->user;
     }
