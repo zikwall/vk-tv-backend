@@ -30,8 +30,10 @@ class AccountController extends BaseController
             }
         }
 
-        if (!AttributesValidator::isValidRealName($name)) {
-            return $this->response(Auth::ERROR_INVALID_NAME, 200);
+        if (!empty($name)) {
+            if (!AttributesValidator::isValidRealName($name)) {
+                return $this->response(Auth::ERROR_INVALID_NAME, 200);
+            }
         }
 
         /**
