@@ -18,7 +18,7 @@ class PlaylistHelper
         ];
     }
 
-    public static function sanitizeItem(array $playlist, bool $useCategoty = false) : array
+    public static function sanitizeItem(array $playlist, bool $useCategory = false) : array
     {
         $pl = [
             'epg_id'        => $playlist['epg_id'],
@@ -29,7 +29,7 @@ class PlaylistHelper
             'xmltv_id'      => $playlist['xmltv_id'],
         ];
 
-        if ($useCategoty) {
+        if ($useCategory) {
             $pl['category'] = Category::getName($playlist['category']);
         }
 
