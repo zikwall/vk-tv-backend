@@ -73,6 +73,18 @@ class Auth
         ]
     ];
 
+    const ERROR_NOT_VALID_DATA = [
+        'code' => 9,
+        'message' => 'Incorrect attributes',
+        'attributes' => []
+    ];
+
+    const ERROR_NOT_SAVED_DATA = [
+        'code' => 10,
+        'message' => 'Failed to save',
+        'attributes' => []
+    ];
+
     const SUCCESS_DESTROYED_ACCOUNT = [
         'code' => 101,
         'message' => 'Succsessfully delete account, Bye!',

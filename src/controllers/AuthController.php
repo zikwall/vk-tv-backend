@@ -38,8 +38,10 @@ class AuthController extends BaseController
             return $this->response(Auth::MESSAGE_USER_ALREADY_CONFIRMED_SINGUP, 200);
         }
 
-        if (!AttributesValidator::isValidEmail($publiEmail)) {
-            return $this->response(Auth::ERROR_INVALID_EMAIL_ADRESS, 200);
+        if (!empty($publiEmail)) {
+            if (!AttributesValidator::isValidEmail($publiEmail)) {
+                return $this->response(Auth::ERROR_INVALID_EMAIL_ADRESS, 200);
+            }
         }
 
         if (!AttributesValidator::isValidRealName($name)) {
