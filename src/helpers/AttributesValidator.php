@@ -4,6 +4,24 @@ namespace vktv\helpers;
 
 class AttributesValidator
 {
+    public static function isEveryRequired(array $checkArray, array $requiredItems) : array
+    {
+        $isInvalid = false;
+        $missingAttributes = [];
+
+        foreach ($requiredItems as $requiredItem) {
+            if (!isset($checkArray[$requiredItem])) {
+                $isInvalid = true;
+                $missingAttributes[] = $requiredItem;
+            }
+        }
+
+        return [
+            'state' => !$isInvalid,
+            'missing' => $missingAttributes
+        ];
+    }
+    
     public static function isValidPassword(string $password) : bool
     {
         if (strlen($password) < 8) {
