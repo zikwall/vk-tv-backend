@@ -2,10 +2,11 @@
 
 namespace zikwall\vktv\controllers;
 
+use yii\web\Controller;
 
-class StaticController extends BaseController
+class StaticController extends Controller
 {
-    public $layout = null;
+    public $layout = false;
 
     public function actionCopyright()
     {
