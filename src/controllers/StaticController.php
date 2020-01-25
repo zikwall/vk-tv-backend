@@ -6,7 +6,7 @@ use yii\web\Controller;
 
 class StaticController extends Controller
 {
-    public $layout = false;
+    public $layout = 'static';
 
     public function actionCopyright()
     {
