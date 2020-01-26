@@ -13,6 +13,35 @@ class FriendsRequestController extends BaseController
 {
     use RequestTrait;
 
+    public function actionList()
+    {
+        if ($this->isRequestOptions()) {
+            return true;
+        }
+
+        if ($this->isUnauthtorized()) {
+            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
+        }
+
+        $post = $this->getJSONBody();
+        $validate = AttributesValidator::isEveryRequired($post, ['user_id']);
+
+        if ($validate['state'] === false) {
+            return $this->response(
+                array_merge(Validation::NOT_REQUIRED_ATTRIBUTES, ['attributes' => $validate['missing']
+                ]), 200);
+        }
+
+        $query = Friendship::getFriendsQuery($this->getUser());
+
+        return $this->response([
+            'code' => 200,
+            'response' => [
+                'friends' => $query->asArray()->all()
+            ]
+        ], 200);
+    }
+
     public function actionAdd()
     {
         if ($this->isRequestOptions()) {
@@ -22,7 +51,7 @@ class FriendsRequestController extends BaseController
         if ($this->isUnauthtorized()) {
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
         }
-        
+
         $post = $this->getJSONBody();
         $validate = AttributesValidator::isEveryRequired($post, ['user_id']);
 
@@ -58,7 +87,7 @@ class FriendsRequestController extends BaseController
         if ($this->isUnauthtorized()) {
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
         }
-        
+
         $post = $this->getJSONBody();
         $validate = AttributesValidator::isEveryRequired($post, ['user_id']);
 
