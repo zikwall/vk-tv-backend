@@ -43,11 +43,35 @@ class ApiController extends BaseController
         $count = $cloneQuery->count();
         $countPages = (int) ceil($count/$paginationSize);
 
+        $sinitizeItems = [];
+        $query->offset($offset * $paginationSize)->limit($paginationSize);
+        foreach ($query->all() as $each) {
+            $sinitizeItems[] =
+                [
+                    'id'                => $each['id'],
+                    'user_id'           => (int) $each['user_id'],
+                    'url'               => $each['url'],
+                    'type'              => (int) $each['type'] === Content::TYPE_CHANNEL ? 'Телеканал' : 'Фильм',
+                    'category'          => Category::getName($each['category']),
+                    'name'              => $each['name'],
+                    'image'             => $each['image'],
+                    'desc'              => $each['desc'],
+                    'rating'            => (float) $each['rating'],
+                    'age_limit'         => (int) $each['age_limit'],
+                    'created_at'        => (int) $each['created_at'],
+                    'updated_at'        => (int) $each['updated_at'],
+                    'is_auth_required'  => (int) $each['is_auth_required'],
+                    'visibility'        => (int) $each['visibility'],
+                    'pinned'            => (int) $each['pinned'],
+                    'archived'          => (int) $each['archived'],
+                ];
+        }
+
         return $this->response([
             'code' => 200,
             'response' => [
                 'count_pages' => $countPages,
-                'contents' => $query->offset($offset * $paginationSize)->limit($paginationSize)->all(),
+                'contents' => $sinitizeItems,
                 'end' => $countPages === $offset
             ]
         ], 200);
