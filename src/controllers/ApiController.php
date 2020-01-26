@@ -33,7 +33,7 @@ class ApiController extends BaseController
             ]);
 
         if ($isAuth === false) {
-            $query->andWhere(['!=', 'visibility' => Content::VISIBILITY_PRIVATE]);
+            $query->andWhere(['!=', 'visibility', Content::VISIBILITY_PRIVATE]);
         }
 
         /**
