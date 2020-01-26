@@ -9,9 +9,50 @@ use vktv\helpers\PlaylistHelper;
 use Yii;
 use yii\db\Query;
 use yii\web\Response;
+use zikwall\vktv\constants\Content;
 
 class ApiController extends BaseController
 {
+    public function actionContent(int $offset = 0, int $paginationSize = 20)
+    {
+        $isAuth = false;
+
+        if ($this->isUnauthtorized() === false) {
+            $isAuth = true;
+        }
+
+        $query = (new Query())->select('*')
+            ->from('{{%content}}')
+            ->where(['and',
+                [
+                    'active' => 1
+                ],
+                [
+                    'blocked' => 0,
+                ]
+            ]);
+
+        if ($isAuth === false) {
+            $query->andWhere(['!=', 'visibility' => Content::VISIBILITY_PRIVATE]);
+        }
+
+        /**
+         * TODO parent control
+         */
+        $cloneQuery = clone $query;
+        $count = $cloneQuery->count();
+        $countPages = (int) ceil($count/$paginationSize);
+
+        return $this->response([
+            'code' => 200,
+            'response' => [
+                'count_pages' => $countPages,
+                'contents' => $query->offset($offset * $paginationSize)->limit($paginationSize)->all(),
+                'end' => $countPages === $offset
+            ]
+        ], 200);
+    }
+
     public function actionChannels(int $useHttp = 0, int $withGrouped = 1, int $byKeys = 0)
     {
         /**
