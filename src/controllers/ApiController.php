@@ -56,7 +56,7 @@ class ApiController extends BaseController
                     'name'              => $each['name'],
                     'image'             => $each['image'],
                     'desc'              => $each['desc'],
-                    'rating'            => (float) $each['rating'],
+                    'rating'            => sprintf('%.1f', $each['rating']),
                     'age_limit'         => (int) $each['age_limit'],
                     'created_at'        => (int) $each['created_at'],
                     'updated_at'        => (int) $each['updated_at'],
