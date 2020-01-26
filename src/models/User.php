@@ -374,6 +374,15 @@ class User extends ActiveRecord implements IdentityInterface
         ]);
     }
 
+    public function makePremium($ttl)
+    {
+        $this->is_premium = 1;
+        $this->premium_ttl = $ttl;
+        $affectedRows = $this->updateAttributes(['is_premium', 'premium_ttl']);
+        
+        return $affectedRows > 0;
+    }
+    
     public function isAlreadyConfirmed() : bool
     {
         return $this->confirmed_at !== null;

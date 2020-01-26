@@ -14,6 +14,9 @@ class BaseController extends \yii\rest\Controller
 {
     use ModuleTrait;
 
+    /**
+     * @var User
+     */
     public $user = null;
     protected $enableAuthorization = true;
 
