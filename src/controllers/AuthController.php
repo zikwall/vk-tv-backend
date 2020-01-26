@@ -58,16 +58,7 @@ class AuthController extends BaseController
             'code' => 200,
             'response' => [
                 'message' => 'Successfully!',
-                'user' => [
-                    'id' => $this->getUser()->id,
-                    'username' => $this->getUser()->username,
-                    'email' => $this->getUser()->email,
-                    'profile' => [
-                        'name' => $this->getUser()->profile->name,
-                        'public_email' => $this->getUser()->profile->public_email,
-                        'avatar' => $this->getUser()->profile->avatar
-                    ]
-                ]
+                'user' => $this->getUserAttributes($this->getUser())
             ]
         ], 200);
     }
@@ -268,6 +259,7 @@ class AuthController extends BaseController
             'id' => $user->id,
             'username' => $user->username,
             'email' => $user->email,
+            'is_premium' => $user->is_premium && $user->premium_ttl > time(),
             'profile' => [
                 'name' => $user->profile->name,
                 'public_email' => $user->profile->public_email,

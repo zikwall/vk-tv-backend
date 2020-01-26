@@ -11,7 +11,7 @@ use zikwall\vktv\RequestTrait;
 class PremiumController extends BaseController
 {
     use RequestTrait;
-    
+
     public function actionActivate()
     {
         if ($this->isRequestOptions()) {
@@ -21,7 +21,7 @@ class PremiumController extends BaseController
         if ($this->isUnauthtorized()) {
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
         }
-        
+
         $post = $this->getJSONBody();
         $validate = AttributesValidator::isEveryRequired($post, ['key']);
 
@@ -30,9 +30,9 @@ class PremiumController extends BaseController
                 array_merge(Validation::NOT_REQUIRED_ATTRIBUTES, ['attributes' => $validate['missing']
                 ]), 200);
         }
-        
+
         $key = (new Query())->from('premium_key')->where(['key' => $post['key']])->one();
-        
+
         if (!$key) {
             return $this->response([
                 'code' => 100,
@@ -42,14 +42,19 @@ class PremiumController extends BaseController
                 ]
             ], 200);
         }
-        
+
         if ($this->getUser()->makePremium($key['expired'])) {
             return $this->response([
                 'code' => 200,
-                'message' => "Успешно активирован премиум до " . date('d-m-Y H:i', $key['expired'])
+                'response' => [
+                    'message' => "Успешно активирован премиум до " . date('d-m-Y H:i', $key['expired']),
+                    'user' => [
+                        'is_premium' => $this->getUser()->is_premium && $this->getUser()->premium_ttl > time(),
+                    ]
+                ]
             ], 200);
         }
-        
+
         return $this->response([
             'code' => 100,
             'message' => 'Не удалось активировать проемиум, нам жаль...'
