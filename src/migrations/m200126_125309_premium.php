@@ -12,7 +12,7 @@ class m200126_125309_premium extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('{{%premium_key', [
+        $this->createTable('{{%premium_key}}', [
             'id' => $this->primaryKey(),
             'key' => $this->string(20)->notNull(),
             'expired' => $this->integer()->notNull()
