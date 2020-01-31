@@ -133,6 +133,7 @@ class AuthController extends BaseController
         $email    = $post['email'];
         $username = $post['username'];
         $password = $post['password'];
+        $deivceId = $post['deviceId'];
 
         if (!AttributesValidator::isValidPassword($password)) {
             return $this->response(Auth::ERROR_INVALID_PASSWORD, 200);
@@ -166,6 +167,7 @@ class AuthController extends BaseController
             'email'    => $email,
             'username' => $username,
             'password' => $password,
+            'first_device_id' => $deivceId
         ]);
 
         if ($user->register()) {
