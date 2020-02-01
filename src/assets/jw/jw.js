@@ -1,12 +1,3 @@
-/*!
-   JW Player version 8.11.8
-   Copyright (c) 2019, JW Player, All Rights Reserved
-   This source code and its use and distribution is subject to the terms
-   and conditions of the applicable license agreement.
-   https://www.jwplayer.com/tos/
-   This product includes portions of other software. For the full text of licenses, see
-   https://ssl.p.jwpcdn.com/player/v/8.11.8/notice.txt
-*/
 window.jwplayer = function(t) {
     function e(e) {
         for (var n, i, o = e[0], u = e[1], a = 0, s = []; a < o.length; a++) i = o[a], r[i] && s.push(r[i][0]), r[i] = 0;
