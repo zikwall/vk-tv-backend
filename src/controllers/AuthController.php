@@ -262,6 +262,7 @@ class AuthController extends BaseController
             'username' => $user->username,
             'email' => $user->email,
             'is_premium' => $user->is_premium && $user->premium_ttl > time(),
+            'is_official' => $user->is_official,
             'profile' => [
                 'name' => $user->profile->name,
                 'public_email' => $user->profile->public_email,
