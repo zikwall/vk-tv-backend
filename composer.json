@@ -16,11 +16,16 @@
     {
       "type": "git",
       "url": "https://github.com/zikwall/m3uparse.git"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/zikwall/m3u-content-parser.git"
     }
   ],
   "require": {
     "php": ">=7.1.0",
     "zikwall/m3uparse": "dev-master",
+    "zikwall/m3u-content-parser": "dev-master",
     "firebase/php-jwt": "^5.0"
   },
   "autoload": {
