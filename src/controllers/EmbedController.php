@@ -96,4 +96,35 @@ class EmbedController extends Controller
             'embed' => $embed
         ]);
     }
+
+    public function actionGiveContent(int $id, int $player = self::PLAYER_JW)
+    {
+        $this->setLayout(self::getLayoutByPlayer($player));
+
+        if (empty($id)) {
+            return \yii\base\InvalidArgumentException('ID is required');
+        }
+
+        $embed = (new Query())
+            ->select('url')
+            ->from('{{%content}}')
+            ->where(['and',
+                [
+                    'id' => $id
+                ],
+                [
+                    'blocked' => 0
+                ]
+            ])
+            ->one();
+
+        if (!$embed) {
+            return \yii\web\NotFoundHttpException('Content Not Found');
+        }
+
+
+        return $this->render(self::getViewByPlayer($player), [
+            'embed' => $embed
+        ]);
+    }
 }
