@@ -27,7 +27,7 @@ class ParseController extends BaseController
 
         return $this->response([
             'code' => 200,
-            'resposne' => $items
+            'response' => $items
         ], 200);
     }
 }
