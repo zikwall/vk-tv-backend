@@ -35,9 +35,10 @@ class ParseController extends BaseController
              * @var $item M3UItem
              */
             $items[] = [
-                'name' => $item->getTvgName(),
-                'logo' => $item->getTvgLogo(),
-                'url'  => $item->getTvgUrl()
+                'name'      => trim($item->getTvgName()),
+                'image'     => $item->getTvgLogo(),
+                'url'       => $item->getTvgUrl(),
+                'category'  => $item->getGroupTitle()
             ];
         }
 
