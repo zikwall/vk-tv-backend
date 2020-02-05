@@ -66,6 +66,13 @@ class EmbedController extends Controller
         return true;
     }
 
+    public function actionByUrl(string $url)
+    {
+        return $this->render('give_openplayer_url', [
+            'url' => $url
+        ]);
+    }
+
     public function actionGive(int $epg, int $player = self::PLAYER_JW)
     {
         $this->setLayout(self::getLayoutByPlayer($player));
