@@ -96,7 +96,7 @@ class BaseController extends \yii\rest\Controller
         return null;
     }
 
-    public function response(array $content, int $status) : Response
+    public function response(array $content, int $status = 200) : Response
     {
         Yii::$app->response->statusCode = $status;
         return $this->asJson($content);
