@@ -32,6 +32,13 @@ class EmbedController extends Controller
         return "give{$viewName}";
     }
 
+    public static function getUrlViewByPlayer($id)
+    {
+        $viewName = self::PLAYER_VIEW[$id];
+
+        return "give_url{$viewName}";
+    }
+
     public static function getLayoutByPlayer($id)
     {
         $layoutName = self::PLAYER_LAYOUT[$id];
@@ -66,9 +73,11 @@ class EmbedController extends Controller
         return true;
     }
 
-    public function actionByUrl(string $url)
+    public function actionByUrl(string $url, int $player = self::PLAYER_JW)
     {
-        return $this->render('give_openplayer_url', [
+        $this->setLayout(self::getLayoutByPlayer($player));
+
+        return $this->render(self::getUrlViewByPlayer($player), [
             'url' => $url
         ]);
     }
