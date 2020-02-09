@@ -3,6 +3,7 @@
 namespace zikwall\vktv\controllers;
 
 use vktv\helpers\Category;
+use vktv\helpers\Type;
 use Yii;
 use yii\db\Query;
 use zikwall\vktv\RequestTrait;
@@ -69,8 +70,95 @@ class ContentController extends BaseController
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
         }
 
+        /**
+         * Example request POST JSON data
+         *
+         * {
+         *      "ad_url": "",
+         *      "category": 70,
+         *      "desc": "Test desc",
+         *      "image_url": "",
+         *      "in_main": true,
+         *      "is_18_years_old": false,
+         *      "is_active": true,
+         *      "is_archive": false,
+         *      "is_pinned": true,
+         *      "name": "Test",
+         *      "own_player_url": "",
+         *      "type": 10,
+         *      "url": "https://iptv-org.github.io/iptv/countries/ru.m3u",
+         *      "use_own_player": false
+         * }
+         */
         $post = $this->getJSONBody();
+        $user = $this->getUser();
 
+        if ($post['in_main'] && $user->is_official !== 1) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Вы не являетесь оффициальным представителем и не можете добавлять контент на главную страницу!',
+                'attributes' => [
+                    'in_main'
+                ]
+            ], 200);
+        }
+
+        if (strlen($post['name']) <= 0 || strlen($post['name']) > 30) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Наименование не может быть пустым и длинее 30 символов.',
+                'attributes' => [
+                    'name'
+                ]
+            ], 200);
+        }
+
+        if (strlen($post['url']) <= 0 || strlen($post['url']) > 250) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Ссылка на вещание не может быть пустым и длинее 250 символов.',
+                'attributes' => [
+                    'url'
+                ]
+            ], 200);
+        }
+
+        if (strlen($post['url']) > 0) {
+            if (!preg_match('/([a-zA-Z0-9\s_\\.\-\(\):])+(.m3u|.m3u8)$/i', $post['url']) || AttributesValidator::isValidURL($post['url'])) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Некорректная ссылка на вещание.',
+                    'attributes' => [
+                        'url'
+                    ]
+                ], 200);
+            }
+        }
+
+        if (strlen($post['image_url']) > 0) {
+
+        }
+
+        if (strlen($post['ad_url']) > 0) {
+
+        }
+
+        if ($post['use_own_player'] || strlen($post['own_player_url']) > 0) {
+
+        }
+
+        if (strlen($post['desc']) > 1000) {
+
+        }
+
+        if (!in_array($post['type'], array_keys(Type::getList()))) {
+            
+        }
+
+        if (!in_array($post['category'], array_keys(Category::getList()))) {
+
+        }
+        
         return $this->response([
             'code' => 200,
             'response' => $post
