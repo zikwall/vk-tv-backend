@@ -68,6 +68,13 @@ class ContentController extends BaseController
         if ($this->isUnauthtorized()) {
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
         }
+
+        $post = $this->getJSONBody();
+
+        return $this->response([
+            'code' => 200,
+            'response' => $post
+        ]);
     }
 
     public function actionDelete()
