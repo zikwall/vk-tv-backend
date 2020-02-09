@@ -161,7 +161,7 @@ class ContentController extends BaseController
 
         return $this->response([
             'code' => 200,
-            'response' => $post
+            'response' => 'Все нормально в скором времени Вы сможете увидеть свой контент!'
         ]);
     }
 
