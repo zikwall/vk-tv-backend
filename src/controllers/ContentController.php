@@ -124,7 +124,7 @@ class ContentController extends BaseController
         }
 
         if (strlen($post['url']) > 0) {
-            if (!preg_match('/([a-zA-Z0-9\s_\\.\-\(\):])+(.m3u|.m3u8)$/i', $post['url']) || AttributesValidator::isValidURL($post['url'])) {
+            if (!preg_match('/([a-zA-Z0-9\s_\\.\-\(\):])+(.m3u|.m3u8)$/i', $post['url']) || !AttributesValidator::isValidURL($post['url'])) {
                 return $this->response([
                     'code' => 100,
                     'message' => 'Некорректная ссылка на вещание.',
@@ -152,13 +152,13 @@ class ContentController extends BaseController
         }
 
         if (!in_array($post['type'], array_keys(Type::getList()))) {
-            
+
         }
 
         if (!in_array($post['category'], array_keys(Category::getList()))) {
 
         }
-        
+
         return $this->response([
             'code' => 200,
             'response' => $post
