@@ -8,6 +8,11 @@ class StaticController extends Controller
 {
     public $layout = 'static';
 
+    public function actionContentPostingRules()
+    {
+        return $this->render('content-posting-rules');
+    }
+
     public function actionCopyright()
     {
         return $this->render('copyright');
