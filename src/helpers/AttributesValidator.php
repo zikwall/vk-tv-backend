@@ -21,7 +21,7 @@ class AttributesValidator
             'missing' => $missingAttributes
         ];
     }
-    
+
     public static function isValidPassword(string $password) : bool
     {
         if (strlen($password) < 8) {
@@ -57,5 +57,15 @@ class AttributesValidator
         }
 
         return preg_match('/^[a-zA-Z]+(([\',. -][a-zA-Z ])?[a-zA-Z]*)*$/', $name);
+    }
+
+    public static function isValidURL($str)
+    {
+        return preg_match('/^(https?:\\/\\/)?' . // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' . // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' . // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' . // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?' .// query string
+            '(\\#[-a-z\\d_]*)?$/i', $str);
     }
 }
