@@ -93,16 +93,6 @@ class ContentController extends BaseController
         $post = $this->getJSONBody();
         $user = $this->getUser();
 
-        if ($post['in_main'] && $user->is_official !== 1) {
-            return $this->response([
-                'code' => 100,
-                'message' => 'Вы не являетесь оффициальным представителем и не можете добавлять контент на главную страницу!',
-                'attributes' => [
-                    'in_main'
-                ]
-            ], 200);
-        }
-
         if (strlen($post['name']) <= 0 || strlen($post['name']) > 30) {
             return $this->response([
                 'code' => 100,
@@ -136,27 +126,123 @@ class ContentController extends BaseController
         }
 
         if (strlen($post['image_url']) > 0) {
+            if (strlen($post['image_url']) > 500) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Ссылка на изображение не может быть длинее 500 символов.',
+                    'attributes' => [
+                        'image_url'
+                    ]
+                ]);
+            }
 
+            if (!AttributesValidator::isValidURL($post['image_url'])) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Некорректная ссылка на изображение.',
+                    'attributes' => [
+                        'image_url'
+                    ]
+                ]);
+            }
         }
 
         if (strlen($post['ad_url']) > 0) {
+            if (strlen($post['ad_url']) > 500) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Ссылка на рекламу не может быть длинее 500 символов.',
+                    'attributes' => [
+                        'ad_url'
+                    ]
+                ]);
+            }
 
+            if (!AttributesValidator::isValidURL($post['ad_url'])) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Некорректная ссылка на рекламу.',
+                    'attributes' => [
+                        'ad_url'
+                    ]
+                ]);
+            }
         }
 
         if ($post['use_own_player'] || strlen($post['own_player_url']) > 0) {
+            if ($post['use_own_player'] && strlen($post['own_player_url']) === 0) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Вы установлили флаг "Использовать свой плеер", но не указали ссылку на плеер.',
+                    'attributes' => [
+                        'own_player_url'
+                    ]
+                ]);
+            }
 
+            if (strlen($post['ad_url']) > 500) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Ссылка на плеер не может быть длинее 500 символов.',
+                    'attributes' => [
+                        'own_player_url'
+                    ]
+                ]);
+            }
+
+            if (!AttributesValidator::isValidURL($post['ad_url'])) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Некорректная ссылка на свой плеер.',
+                    'attributes' => [
+                        'own_player_url'
+                    ]
+                ]);
+            }
         }
 
         if (strlen($post['desc']) > 1000) {
-
+            return $this->response([
+                'code' => 100,
+                'message' => 'Описание не может быть длинее 1000 символов.',
+                'attributes' => [
+                    'desc'
+                ]
+            ]);
         }
 
         if (!in_array($post['type'], array_keys(Type::getList()))) {
-
+            return $this->response([
+                'code' => 100,
+                'message' => 'Вы хотите установить не существующий тип контента!',
+                'attributes' => [
+                    'type'
+                ]
+            ]);
         }
 
         if (!in_array($post['category'], array_keys(Category::getList()))) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Вы хотите установить не существующую категорию!',
+                'attributes' => [
+                    'category'
+                ]
+            ]);
+        }
 
+        if ($post['in_main']) {
+            if ($user->is_official !== 1) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Вы не являетесь оффициальным представителем и не можете добавлять контент на главную страницу!',
+                    'attributes' => [
+                        'in_main'
+                    ]
+                ], 200);
+            }
+
+            // TODO STORE TO PLAYLIST
         }
 
         return $this->response([
