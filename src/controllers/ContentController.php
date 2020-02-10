@@ -3,7 +3,10 @@
 namespace zikwall\vktv\controllers;
 
 use vktv\helpers\Category;
+use vktv\helpers\ContentContainer;
+use vktv\helpers\SimpleValidator;
 use vktv\helpers\Type;
+use vktv\models\Playlist;
 use Yii;
 use yii\db\Query;
 use zikwall\vktv\RequestTrait;
@@ -60,6 +63,26 @@ class ContentController extends BaseController
         ], 200);
     }
 
+    /**
+     * Example request POST JSON data
+     *
+     * {
+     *      "ad_url": "",
+     *      "category": 70,
+     *      "desc": "Test desc",
+     *      "image_url": "",
+     *      "in_main": true,
+     *      "is_18_years_old": false,
+     *      "is_active": true,
+     *      "is_archive": false,
+     *      "is_pinned": true,
+     *      "name": "Test",
+     *      "own_player_url": "",
+     *      "type": 10,
+     *      "url": "https://iptv-org.github.io/iptv/countries/ru.m3u",
+     *      "use_own_player": false
+     * }
+     */
     public function actionCreate()
     {
         if ($this->isRequestOptions()) {
@@ -70,168 +93,24 @@ class ContentController extends BaseController
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
         }
 
-        /**
-         * Example request POST JSON data
-         *
-         * {
-         *      "ad_url": "",
-         *      "category": 70,
-         *      "desc": "Test desc",
-         *      "image_url": "",
-         *      "in_main": true,
-         *      "is_18_years_old": false,
-         *      "is_active": true,
-         *      "is_archive": false,
-         *      "is_pinned": true,
-         *      "name": "Test",
-         *      "own_player_url": "",
-         *      "type": 10,
-         *      "url": "https://iptv-org.github.io/iptv/countries/ru.m3u",
-         *      "use_own_player": false
-         * }
-         */
-        $post = $this->getJSONBody();
+        if ($this->isRequestPost() === false) {
+            return $this->response([
+                'code' => 100,
+                'response' => 'Не правильно сформированный HTTP запрос.'
+            ]);
+        }
+
+        $contentAttributes = $this->getJSONBody();
         $user = $this->getUser();
+        $saveToPlaylist = false;
 
-        if (strlen($post['name']) <= 0 || strlen($post['name']) > 30) {
-            return $this->response([
-                'code' => 100,
-                'message' => 'Наименование не может быть пустым и длинее 30 символов.',
-                'attributes' => [
-                    'name'
-                ]
-            ], 200);
+        $validate = SimpleValidator::validateContentForm($contentAttributes);
+
+        if ($validate['code'] === 100) {
+            return $this->response($validate);
         }
 
-        if (strlen($post['url']) <= 0 || strlen($post['url']) > 250) {
-            return $this->response([
-                'code' => 100,
-                'message' => 'Ссылка на вещание не может быть пустым и длинее 250 символов.',
-                'attributes' => [
-                    'url'
-                ]
-            ], 200);
-        }
-
-        if (strlen($post['url']) > 0) {
-            if (!preg_match('/([a-zA-Z0-9\s_\\.\-\(\):])+(.m3u|.m3u8)$/i', $post['url']) || !AttributesValidator::isValidURL($post['url'])) {
-                return $this->response([
-                    'code' => 100,
-                    'message' => 'Некорректная ссылка на вещание.',
-                    'attributes' => [
-                        'url'
-                    ]
-                ], 200);
-            }
-        }
-
-        if (strlen($post['image_url']) > 0) {
-            if (strlen($post['image_url']) > 500) {
-                return $this->response([
-                    'code' => 100,
-                    'message' => 'Ссылка на изображение не может быть длинее 500 символов.',
-                    'attributes' => [
-                        'image_url'
-                    ]
-                ]);
-            }
-
-            if (!AttributesValidator::isValidURL($post['image_url'])) {
-                return $this->response([
-                    'code' => 100,
-                    'message' => 'Некорректная ссылка на изображение.',
-                    'attributes' => [
-                        'image_url'
-                    ]
-                ]);
-            }
-        }
-
-        if (strlen($post['ad_url']) > 0) {
-            if (strlen($post['ad_url']) > 500) {
-                return $this->response([
-                    'code' => 100,
-                    'message' => 'Ссылка на рекламу не может быть длинее 500 символов.',
-                    'attributes' => [
-                        'ad_url'
-                    ]
-                ]);
-            }
-
-            if (!AttributesValidator::isValidURL($post['ad_url'])) {
-                return $this->response([
-                    'code' => 100,
-                    'message' => 'Некорректная ссылка на рекламу.',
-                    'attributes' => [
-                        'ad_url'
-                    ]
-                ]);
-            }
-        }
-
-        if ($post['use_own_player'] || strlen($post['own_player_url']) > 0) {
-            if ($post['use_own_player'] && strlen($post['own_player_url']) === 0) {
-                return $this->response([
-                    'code' => 100,
-                    'message' => 'Вы установлили флаг "Использовать свой плеер", но не указали ссылку на плеер.',
-                    'attributes' => [
-                        'own_player_url'
-                    ]
-                ]);
-            }
-
-            if (strlen($post['ad_url']) > 500) {
-                return $this->response([
-                    'code' => 100,
-                    'message' => 'Ссылка на плеер не может быть длинее 500 символов.',
-                    'attributes' => [
-                        'own_player_url'
-                    ]
-                ]);
-            }
-
-            if (!AttributesValidator::isValidURL($post['ad_url'])) {
-                return $this->response([
-                    'code' => 100,
-                    'message' => 'Некорректная ссылка на свой плеер.',
-                    'attributes' => [
-                        'own_player_url'
-                    ]
-                ]);
-            }
-        }
-
-        if (strlen($post['desc']) > 1000) {
-            return $this->response([
-                'code' => 100,
-                'message' => 'Описание не может быть длинее 1000 символов.',
-                'attributes' => [
-                    'desc'
-                ]
-            ]);
-        }
-
-        if (!in_array($post['type'], array_keys(Type::getList()))) {
-            return $this->response([
-                'code' => 100,
-                'message' => 'Вы хотите установить не существующий тип контента!',
-                'attributes' => [
-                    'type'
-                ]
-            ]);
-        }
-
-        if (!in_array($post['category'], array_keys(Category::getList()))) {
-            return $this->response([
-                'code' => 100,
-                'message' => 'Вы хотите установить не существующую категорию!',
-                'attributes' => [
-                    'category'
-                ]
-            ]);
-        }
-
-        if ($post['in_main']) {
+        if ($contentAttributes['in_main']) {
             if ($user->is_official !== 1) {
                 return $this->response([
                     'code' => 100,
@@ -242,12 +121,28 @@ class ContentController extends BaseController
                 ], 200);
             }
 
-            // TODO STORE TO PLAYLIST
+            $saveToPlaylist = true;
+        }
+
+        $content = ContentContainer::saveWithActiveRecord(new \vktv\models\Content(), $contentAttributes, $user);
+
+        if ($content !== false) {
+            $withPlaylist = false;
+
+            if ($saveToPlaylist && ContentContainer::savePlaylistAfterContent(new Playlist(), $content, $user) !== false) {
+                $withPlaylist = true;
+            }
+
+            return $this->response([
+                'code' => 200,
+                'response' => sprintf('Все нормально в скором времени Вы сможете увидеть свой контент!%s',
+                    $withPlaylist ? ' И на главной тоже!' : '')
+            ]);
         }
 
         return $this->response([
-            'code' => 200,
-            'response' => 'Все нормально в скором времени Вы сможете увидеть свой контент!'
+            'code' => 100,
+            'response' => 'Не удалось создать контент, внутрення ошибка сервера...'
         ]);
     }
 
@@ -262,7 +157,7 @@ class ContentController extends BaseController
         }
     }
 
-    public function actionEdit()
+    public function actionEdit(int $id)
     {
         if ($this->isRequestOptions()) {
             return true;
@@ -271,6 +166,66 @@ class ContentController extends BaseController
         if ($this->isUnauthtorized()) {
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
         }
+
+        $user = $this->getUser();
+
+        $content = \vktv\models\Content::find()
+            ->select('{{%content}}.*')
+            ->from('{{%content}}')
+            ->leftJoin('{{%user}}', '{{%content}}.user_id={{%user}}.id')
+            ->where(['{{%content}}.id' => $id])
+            ->andWhere(['{{%user}}.id' => $user->getId()])
+            ->one();
+
+        if (!$content) {
+            return $this->response([
+                'code' => 100,
+                'response' => 'К сожалению данный контент не найден или у Вас нет доступа...'
+            ]);
+        }
+
+        $playlist = Playlist::find()
+            ->where(['and', ['user_id' => $user->getId(), 'content_id' => $content->id]])
+            ->one();
+
+        if ($this->isRequestPost()) {
+            $updateToPlaylist = false;
+            $contentAttributes = $this->getJSONBody();
+
+            $validate = SimpleValidator::validateContentForm($contentAttributes);
+
+            if ($validate['code'] === 100) {
+                return $this->response($validate);
+            }
+
+            if ($contentAttributes['in_main'] && $user->is_official === 1) {
+                $updateToPlaylist = true;
+            }
+
+            if (ContentContainer::saveWithActiveRecord($content, $contentAttributes, $user) !== false) {
+                $withPlaylist = false;
+
+                if ($updateToPlaylist && ContentContainer::savePlaylistAfterContent($playlist, $content, $user) !== false) {
+                    $withPlaylist = true;
+                }
+
+                return $this->response([
+                    'code' => 200,
+                    'response' => sprintf('Все нормально Вы успешно обновили данные!%s',
+                        $withPlaylist ? ' И на главной тоже!' : '')
+                ]);
+            }
+
+            return $this->response([
+                'code' => 100,
+                'response' => 'Что-то пошло не так.. Не удалось обновить контент...'
+            ]);
+        }
+
+        return $this->response([
+            'code' => 200,
+            'response' => $content
+        ]);
     }
 
     public function actionReport()

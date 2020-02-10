@@ -68,4 +68,14 @@ class AttributesValidator
             '(\\?[;&a-z\\d%_.~+=-]*)?' .// query string
             '(\\#[-a-z\\d_]*)?$/i', $str);
     }
+    
+    public static function isOverMaxlen(string $attribute, int $maxLen) : bool
+    {
+        return strlen($attribute) > $maxLen;
+    }
+    
+    public static function isNotEmptyString(string $attribute) : bool 
+    {
+        return strlen($attribute) > 0;
+    }
 }

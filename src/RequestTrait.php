@@ -21,4 +21,9 @@ trait RequestTrait
     {
         return Yii::$app->request->getIsOptions();
     }
+    
+    public function isRequestPost() : bool 
+    {
+        return Yii::$app->request->getIsPost();
+    }
 }
