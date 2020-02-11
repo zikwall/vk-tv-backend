@@ -1,3 +1,39 @@
+<style>
+    /**
+        Fix for Android outline orange border
+     */
+    * {
+        -webkit-tap-highlight-color: transparent!important;
+        -webkit-appearance:none!important;
+        outline: none; /* <-- is fix */
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        box-shadow: none !important;
+    }
+
+    /**
+        Styling Player
+     */
+    [id="jw"].jw-error {
+        background:#fff!important;
+        overflow:hidden;
+        position:relative
+
+    }
+    [id="jw"] .jw-error-msg{
+        top:50%;
+        left:50%;
+        position:absolute;
+        transform:translate(-50%,-50%)
+
+    }
+    [id="jw"] .jw-error-text{
+        text-align:start;
+        color:#FFF;
+        font:14px/1.35 Arial,Helvetica,sans-serif
+
+    }
+</style>
 <div id="jw"></div>
 
 <?php
