@@ -1,13 +1,14 @@
 <?php
 
-namespace vktv\helpers;
+namespace vktv\services;
 
+use vktv\helpers\AttributesValidator;
 use vktv\models\Content;
 use vktv\models\Playlist;
 use yii\db\Query;
 use yii\web\IdentityInterface;
 
-class ContentContainer
+class ContentService
 {
     public static function saveWithActiveRecord(Content $content, array $contentAttributes, IdentityInterface $user)
     {
@@ -28,6 +29,8 @@ class ContentContainer
         $content->pinned                = (int) $contentAttributes['is_pinned'];
         $content->archived              = (int) $contentAttributes['is_archive'];
         $content->active                = (int) $contentAttributes['is_active'];
+        $content->ad_url                = $contentAttributes['ad_url'];
+        $content->use_origin            = $contentAttributes['use_origin'];
 
         if (!$content->save()) {
             return false;
@@ -38,20 +41,20 @@ class ContentContainer
     
     public static function savePlaylistAfterContent(Playlist $playlist, Content $content, IdentityInterface $user)
     {
-        $playlist->epg_id = 0;
-        $playlist->content_id = $content->id;
-        $playlist->user_id = $user->getId();
-        $playlist->name = $content->name;
-        $playlist->url = $content->url;
-        $playlist->ssl = 0;
-        $playlist->active = $content->active;
-        $playlist->blocked = $content->blocked;
-        $playlist->image = $content->image;
-        $playlist->use_origin = $content->use_origin ?? 0;
-        $playlist->category = $content->category;
-        
+        $playlist->epg_id       = 0;
+        $playlist->content_id   = $content->id;
+        $playlist->user_id      = $user->getId();
+        $playlist->name         = $content->name;
+        $playlist->url          = $content->url;
+        $playlist->ssl          = AttributesValidator::isSSL($content->url) ? 1 : 0;
+        $playlist->active       = $content->active;
+        $playlist->blocked      = $content->blocked;
+        $playlist->image        = $content->image;
+        $playlist->use_origin   = $content->use_origin ?? 0;
+        $playlist->category     = $content->category;
+        $playlist->ad_url       = $content->ad_url;
+
         if (!$playlist->save()) {
-            print_r($playlist->getErrors()); exit;
             return false;
         }
         

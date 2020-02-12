@@ -3,15 +3,13 @@
 namespace zikwall\vktv\controllers;
 
 use vktv\helpers\Category;
-use vktv\helpers\ContentContainer;
+use vktv\services\ContentService;
 use vktv\helpers\SimpleValidator;
-use vktv\helpers\Type;
 use vktv\models\Playlist;
 use Yii;
 use yii\db\Query;
 use zikwall\vktv\RequestTrait;
-use zikwall\vktv\constants\{Auth, Content, Validation};
-use vktv\helpers\AttributesValidator;
+use zikwall\vktv\constants\{Auth, Content};
 
 class ContentController extends BaseController
 {
@@ -124,12 +122,12 @@ class ContentController extends BaseController
             $saveToPlaylist = true;
         }
 
-        $content = ContentContainer::saveWithActiveRecord(new \vktv\models\Content(), $contentAttributes, $user);
+        $content = ContentService::saveWithActiveRecord(new \vktv\models\Content(), $contentAttributes, $user);
 
         if ($content !== false) {
             $withPlaylist = false;
 
-            if ($saveToPlaylist && ContentContainer::savePlaylistAfterContent(new Playlist(), $content, $user) !== false) {
+            if ($saveToPlaylist && ContentService::savePlaylistAfterContent(new Playlist(), $content, $user) !== false) {
                 $withPlaylist = true;
             }
 
@@ -202,10 +200,10 @@ class ContentController extends BaseController
                 $updateToPlaylist = true;
             }
 
-            if (ContentContainer::saveWithActiveRecord($content, $contentAttributes, $user) !== false) {
+            if (ContentService::saveWithActiveRecord($content, $contentAttributes, $user) !== false) {
                 $withPlaylist = false;
 
-                if ($updateToPlaylist && ContentContainer::savePlaylistAfterContent($playlist, $content, $user) !== false) {
+                if ($updateToPlaylist && ContentService::savePlaylistAfterContent($playlist, $content, $user) !== false) {
                     $withPlaylist = true;
                 }
 

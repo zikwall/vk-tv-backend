@@ -78,4 +78,9 @@ class AttributesValidator
     {
         return strlen($attribute) > 0;
     }
+    
+    public static function isSSL(string $url) : bool
+    {
+        return strpos($url, "https://") !== false;
+    }
 }
