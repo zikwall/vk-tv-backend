@@ -29,6 +29,8 @@ use Yii;
  * @property int|null $active
  * @property int|null $blocked
  * @property string|null $ad_url
+ * @property int|null $in_main
+ * @property int|null $enable_origin
  */
 class Content extends \yii\db\ActiveRecord
 {
@@ -49,7 +51,7 @@ class Content extends \yii\db\ActiveRecord
             [['user_id', 'url', 'type', 'category', 'name'], 'required'],
             [['user_id', 'type', 'category', 'use_own_player_url', 'use_origin', 'age_limit', 'created_at', 'updated_at', 'is_auth_required', 'visibility', 'pinned', 'archived', 'active', 'blocked'], 'integer'],
             [['desc', 'own_player_url'], 'string'],
-            [['rating'], 'number'],
+            [['rating', 'in_main', 'enable_origin'], 'number'],
             [['url', 'image', 'ad_url'], 'string', 'max' => 255],
             [['name'], 'string', 'max' => 30],
         ];

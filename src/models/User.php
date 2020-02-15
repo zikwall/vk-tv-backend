@@ -15,6 +15,32 @@ use vktv\helpers\Password;
 use vktv\models\query\UserFind;
 use zikwall\vktv\ModuleTrait;
 
+/**
+ * This is the model class for table "user".
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $email
+ * @property string $password_hash
+ * @property string $auth_key
+ * @property int|null $confirmed_at
+ * @property int|null $blocked_at
+ * @property string|null $registration_ip
+ * @property int|null $created_at
+ * @property int|null $updated_at
+ * @property int|null $destroyed_at
+ * @property int $is_destroy
+ * @property string $first_device_id
+ * @property int|null $is_premium
+ * @property int|null $premium_ttl
+ * @property int|null $is_official
+ *
+ * @property Friendship[] $friendships
+ * @property Friendship[] $friendships0
+ * @property User[] $users
+ * @property User[] $friendUsers
+ * @property Profile $profile
+ */
 class User extends ActiveRecord implements IdentityInterface
 {
     use ModuleTrait;
@@ -44,9 +70,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @var string Default username regexp
      */
     public static $usernameRegexp = '/^[-a-zA-Z0-9_\.@]+$/';
-
-    private $_isSystemAdmin = null;
-
+    
     /**
      * @return UserFind|\yii\db\ActiveQuery
      */
@@ -116,21 +140,8 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @param bool $cached
-     * @return bool|null
-     */
-    public function isSystemAdmin($cached = true)
-    {
-        if ($this->_isSystemAdmin === null || !$cached) {
-            $this->_isSystemAdmin = ($this->getGroups()->where(['is_admin_group' => '1'])->count() > 0);
-        }
-
-        return $this->_isSystemAdmin;
-    }
-
-    /**
      * @param int|string $id
-     * @return null|IdentityInterface|static
+     * @return User|IdentityInterface|null
      */
     public static function findIdentity($id)
     {
@@ -150,89 +161,42 @@ class User extends ActiveRecord implements IdentityInterface
     {
         // TODO: Implement findIdentityByAccessToken() method.
     }
-
-    /**
-     * @param $email
-     * @return null|static
-     */
+    
     public static function findByEmail($email)
     {
         return static::findOne(['email' => $email]);
     }
-
-    /**
-     * @param $username
-     * @return null|static
-     */
+    
     public static function findByUsername($username)
     {
         return static::findOne(['username' => $username]);
     }
-
-    /**
-     * @param $email
-     * @param $username
-     * @return null|static
-     */
+    
     public static function findByEmailOrUsername($email, $username)
     {
         return static::findOne(['email' => $email, 'username' => $username]);
     }
-
-    /**
-     * @param string $authKey
-     * @return bool
-     */
+    
     public function validateAuthKey($authKey)
     {
         return $this->getAttribute('auth_key') === $authKey;
     }
-
-    /**
-     * @return bool Whether the user is an admin or not.
-     */
-    public function getIsAdmin()
-    {
-        return (\Yii::$app->getAuthManager() && $this->getModule()->adminPermission
-                ? \Yii::$app->user->can($this->getModule()->adminPermission)
-                : false) || in_array($this->username, $this->getModule()->admins);
-    }
-
+    
     public function isBlocked() : bool
     {
         return $this->blocked_at !== null;
     }
-
+    
     public function isDestroyed() : bool
     {
         return $this->is_destroy === 1 && $this->destroyed_at !== null;
     }
-
-    public function getPermissionList() : array
-    {
-        $userPermissions = [];
-
-        /**
-         * @var $permission UserPermissions
-         */
-        foreach ($this->userPermissions as $permission) {
-            $userPermissions[] = $permission->permission->permission;
-        }
-
-        return $userPermissions;
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
+    
     public function getProfile()
     {
         return $this->hasOne(Profile::class, ['user_id' => 'id']);
     }
-
-    /**
-     * @param Profile $profile
-     */
+    
     public function setProfile(Profile $profile)
     {
         $this->_profile = $profile;
@@ -247,13 +211,8 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->getAttribute('auth_key');
     }
-
-    /**
-     * Creates new user account. It generates password if it is not provided by user.
-     *
-     * @return bool
-     */
-    public function create()
+    
+    public function create() : bool
     {
         if ($this->getIsNewRecord() == false) {
             throw new \RuntimeException('Calling "' . __CLASS__ . '::' . __METHOD__ . '" on existing user');
@@ -273,12 +232,8 @@ class User extends ActiveRecord implements IdentityInterface
         $this->trigger(self::AFTER_CREATE);
         return true;
     }
-
-    /**
-     * @return bool
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function register()
+    
+    public function register() : bool
     {
         if ($this->getIsNewRecord() == false) {
             throw new \RuntimeException('Calling "' . __CLASS__ . '::' . __METHOD__ . '" on existing user');
@@ -312,23 +267,13 @@ class User extends ActiveRecord implements IdentityInterface
         $this->trigger(self::AFTER_REGISTER);
         return true;
     }
-
-    /**
-     * Confirms the user by setting 'confirmed_at' field to current time.
-     */
-    public function confirm()
+    
+    public function confirm() : bool
     {
         return (bool)$this->updateAttributes(['confirmed_at' => time()]);
     }
-
-    /**
-     * Resets password.
-     *
-     * @param string $password
-     *
-     * @return bool
-     */
-    public function resetPassword($password)
+    
+    public function resetPassword($password) : bool
     {
         return (bool)$this->updateAttributes(['password_hash' => Password::hash($password)]);
     }
@@ -336,7 +281,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Blocks the user by setting 'blocked_at' field to current time and regenerates auth_key.
      */
-    public function block()
+    public function block() : bool
     {
         return (bool)$this->updateAttributes([
             'blocked_at' => time(),
@@ -347,7 +292,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * UnBlocks the user by setting 'blocked_at' field to null.
      */
-    public function unblock()
+    public function unblock() : bool
     {
         return (bool)$this->updateAttributes(['blocked_at' => null]);
     }
@@ -355,7 +300,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return bool
      */
-    public function destroy()
+    public function destroy() : bool
     {
         return (bool)$this->updateAttributes([
             'destroyed_at' => time(),
@@ -366,7 +311,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return bool
      */
-    public function undestroy()
+    public function undestroy() : bool
     {
         return (bool)$this->updateAttributes([
             'destroyed_at' => null,
@@ -374,7 +319,7 @@ class User extends ActiveRecord implements IdentityInterface
         ]);
     }
 
-    public function makePremium($ttl)
+    public function makePremium($ttl) : bool
     {
         $this->is_premium = 1;
         $this->premium_ttl = $ttl;
@@ -417,11 +362,7 @@ class User extends ActiveRecord implements IdentityInterface
 
         return $this->confirm();
     }
-
-    /**
-     * Generates new username based on email address, or creates new username
-     * like "user1".
-     */
+    
     public function generateUsername()
     {
         // try to use name part of email
@@ -448,9 +389,11 @@ class User extends ActiveRecord implements IdentityInterface
                 $this->setAttribute('registration_ip', Yii::$app->request->userIP);
             }
         }
+        
         if (!empty($this->password)) {
             $this->setAttribute('password_hash', Password::hash($this->password));
         }
+        
         return parent::beforeSave($insert);
     }
 

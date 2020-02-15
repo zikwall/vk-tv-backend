@@ -50,4 +50,18 @@ class Review extends \yii\db\ActiveRecord
             'value' => 'Value',
         ];
     }
+    
+    public function afterDelete()
+    {
+        $relatedReviews = ReviewUseful::find()->where([
+            'review_id' => $this->id,
+            'user_id' => $this->user_id
+        ]);
+
+        foreach ($relatedReviews->all() as $record) {
+            $record->delete();
+        }
+
+        parent::afterDelete();
+    }
 }
