@@ -15,62 +15,6 @@ class ContentController extends BaseController
 {
     use RequestTrait;
 
-    public function actionOwnById(int $userId)
-    {
-        if (Yii::$app->request->getIsOptions()) {
-            return true;
-        }
-
-        $content = (new Query())
-            ->select('*')
-            ->from('{{%content}}')
-            ->where(['user_id' => $userId])
-            ->andWhere(['and',
-                [
-                    'active' => 1
-                ],
-                [
-                    'blocked' => 0,
-                ],
-                [
-                    '!=', 'visibility', Content::VISIBILITY_PRIVATE
-                ]
-            ]);
-
-        $sinitizeItems = [];
-        foreach ($content->all() as $each) {
-            $sinitizeItems[] =
-                [
-                    'id'                => $each['id'],
-                    'user_id'           => (int) $each['user_id'],
-                    'url'               => $each['url'],
-                    'type'              => (int) $each['type'] === Content::TYPE_CHANNEL ? 'Телеканал' : 'Фильм',
-                    'category'          => Category::getName($each['category']),
-                    'name'              => $each['name'],
-                    'image'             => $each['image'],
-                    'desc'              => $each['desc'],
-                    'rating'            => sprintf('%.1f', $each['rating']),
-                    'age_limit'         => (int) $each['age_limit'],
-                    'created_at'        => (int) $each['created_at'],
-                    'updated_at'        => (int) $each['updated_at'],
-                    'is_auth_required'  => (int) $each['is_auth_required'],
-                    'visibility'        => (int) $each['visibility'],
-                    'pinned'            => (int) $each['pinned'],
-                    'archived'          => (int) $each['archived'],
-                    'use_origin'        => (int) $each['use_origin'],
-                    'default_player'    => $each['default_player'],
-                    'in_main'           => (int) $each['in_main'],
-                    'use_own_player_url' => (int) $each['use_own_player_url'],
-                    'own_player_url'    => $each['own_player_url']
-                ];
-        }
-
-        return $this->response([
-            'code' => 200,
-            'response' => $sinitizeItems
-        ]);
-    }
-
     public function actionOwn()
     {
         if (Yii::$app->request->getIsOptions()) {
