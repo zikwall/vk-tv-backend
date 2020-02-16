@@ -13,26 +13,22 @@ class FriendsRequestController extends BaseController
 {
     use RequestTrait;
 
-    public function actionList()
+    public function actionList(int $userId)
     {
         if ($this->isRequestOptions()) {
             return true;
         }
 
-        if ($this->isUnauthtorized()) {
-            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
+        $user = User::find()->where(['id' => $userId])->one();
+
+        if (!$user) {
+            return $this->response([
+                'code' => 404,
+                'response' => 'Пользователь не найден!'
+            ]);
         }
 
-        $post = $this->getJSONBody();
-        $validate = AttributesValidator::isEveryRequired($post, ['user_id']);
-
-        if ($validate['state'] === false) {
-            return $this->response(
-                array_merge(Validation::NOT_REQUIRED_ATTRIBUTES, ['attributes' => $validate['missing']
-                ]), 200);
-        }
-
-        $query = Friendship::getFriendsQuery($this->getUser());
+        $query = Friendship::getFriendsQuery($user);
 
         return $this->response([
             'code' => 200,
