@@ -99,11 +99,11 @@ class Friendship extends ActiveRecord
         $query = User::find();
 
         // Users which received a friend requests from given user
-        $query->leftJoin('user_friendship recv', 'user.id=recv.friend_user_id AND recv.user_id=:userId', [':userId' => $user->id]);
+        $query->leftJoin('{{%friendship}} recv', 'user.id=recv.friend_user_id AND recv.user_id=:userId', [':userId' => $user->id]);
         $query->andWhere(['IS NOT', 'recv.id', new \yii\db\Expression('NULL')]);
 
         // Users which send a friend request to given user
-        $query->leftJoin('user_friendship snd', 'user.id=snd.user_id AND snd.friend_user_id=:userId', [':userId' => $user->id]);
+        $query->leftJoin('{{%friendship}} snd', 'user.id=snd.user_id AND snd.friend_user_id=:userId', [':userId' => $user->id]);
         $query->andWhere(['IS NOT', 'snd.id', new \yii\db\Expression('NULL')]);
 
         return $query;
@@ -118,11 +118,11 @@ class Friendship extends ActiveRecord
         $query = User::find();
 
         // Users which received a friend requests from given user
-        $query->leftJoin('user_friendship recv', 'user.id=recv.friend_user_id AND recv.user_id=:userId', [':userId' => $user->id]);
+        $query->leftJoin('{{%friendship}} recv', 'user.id=recv.friend_user_id AND recv.user_id=:userId', [':userId' => $user->id]);
         $query->andWhere(['IS NOT', 'recv.id', new \yii\db\Expression('NULL')]);
 
         // Users which NOT send a friend request to given user
-        $query->leftJoin('user_friendship snd', 'user.id=snd.user_id AND snd.friend_user_id=:userId', [':userId' => $user->id]);
+        $query->leftJoin('{{%friendship}} snd', 'user.id=snd.user_id AND snd.friend_user_id=:userId', [':userId' => $user->id]);
         $query->andWhere(['IS', 'snd.id', new \yii\db\Expression('NULL')]);
 
         return $query;
@@ -137,11 +137,11 @@ class Friendship extends ActiveRecord
         $query = User::find();
 
         // Users which NOT received a friend requests from given user
-        $query->leftJoin('user_friendship recv', 'user.id=recv.friend_user_id AND recv.user_id=:userId', [':userId' => $user->id]);
+        $query->leftJoin('{{%friendship}} recv', 'user.id=recv.friend_user_id AND recv.user_id=:userId', [':userId' => $user->id]);
         $query->andWhere(['IS', 'recv.id', new \yii\db\Expression('NULL')]);
 
         // Users which send a friend request to given user
-        $query->leftJoin('user_friendship snd', 'user.id=snd.user_id AND snd.friend_user_id=:userId', [':userId' => $user->id]);
+        $query->leftJoin('{{%friendship}} snd', 'user.id=snd.user_id AND snd.friend_user_id=:userId', [':userId' => $user->id]);
         $query->andWhere(['IS NOT', 'snd.id', new \yii\db\Expression('NULL')]);
 
         return $query;
