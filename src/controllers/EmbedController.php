@@ -122,7 +122,7 @@ class EmbedController extends Controller
         }
 
         $embed = (new Query())
-            ->select('url')
+            ->select(['url', 'ad_url'])
             ->from('{{%content}}')
             ->where(['and',
                 [
@@ -137,8 +137,7 @@ class EmbedController extends Controller
         if (!$embed) {
             return \yii\web\NotFoundHttpException('Content Not Found');
         }
-
-
+        
         return $this->render(self::getViewByPlayer($player), [
             'embed' => $embed
         ]);
