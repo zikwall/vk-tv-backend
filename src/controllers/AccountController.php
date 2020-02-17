@@ -1,12 +1,13 @@
 <?php
 
-
 namespace zikwall\vktv\controllers;
 
+use vktv\models\User;
 use Yii;
 use vktv\models\Profile;
 use zikwall\vktv\constants\Auth;
 use vktv\helpers\AttributesValidator;
+use zikwall\vktv\constants\Validation;
 
 class AccountController extends BaseController
 {
@@ -86,7 +87,89 @@ class AccountController extends BaseController
 
     public function actionChangeSecurity()
     {
+        if (Yii::$app->request->getIsOptions()) {
+            return true;
+        }
 
+        if ($this->isUnauthtorized()) {
+            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED);
+        }
+
+        $post  = json_decode(Yii::$app->getRequest()->getRawBody(), true);
+        $validate = AttributesValidator::isEveryRequired($post, ['password', 'password_new', 'password_new_check']);
+
+        if ($validate['state'] === false) {
+            return $this->response(
+                array_merge(Validation::NOT_REQUIRED_ATTRIBUTES, ['attributes' => $validate['missing']
+            ]));
+        }
+
+        $old_pass = $post['password'];
+        $new_pass = $post['password_new'];
+        $new_pass_check = $post['password_new_check'];
+
+        if (!AttributesValidator::isValidPassword($old_pass)) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Пароль должен содержать не менее восьми символов, как минимум одну заглавную букву, одну строчную букву и одну цифру.',
+                'attributes' => [
+                    'password'
+                ]
+            ]);
+        }
+
+        if (!AttributesValidator::isValidPassword($new_pass)) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Пароль должен содержать не менее восьми символов, как минимум одну заглавную букву, одну строчную букву и одну цифру.',
+                'attributes' => [
+                    'new_password'
+                ]
+            ]);
+        }
+
+        if (!AttributesValidator::isValidPassword($new_pass_check)) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Пароль должен содержать не менее восьми символов, как минимум одну заглавную букву, одну строчную букву и одну цифру.',
+                'attributes' => [
+                    'password_new_check'
+                ]
+            ]);
+        }
+        
+        if ($new_pass !== $new_pass_check) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Пароли не совпадают!',
+                'attributes' => [
+                    'new_password', 'password_new_check'
+                ]
+            ]);
+        }
+
+        $check = AuthController::authByUserAndPassword($this->getUser()->username, $post['password']);
+
+        if ($check instanceof User) {
+            $user = $this->getUser();
+            $user->password = $new_pass;
+            if ($user->save() === false) {
+                return $this->response([
+                    'code' => 100,
+                    'message' => 'Произошла какая-то неведомая ошибка... Не получилось  в обшем поменять пароль.'
+                ]);
+            }
+
+            return $this->response([
+                'code' => 200,
+                'message' => 'Вы успешно сменили пароль!'
+            ]);
+        }
+
+        return $this->response([
+            'code' => 100,
+            'message' => 'К сожалению процедура смены пароля полность провалилась, крах...'
+        ]);
     }
 
     public function actionChangeNotification()
