@@ -10,6 +10,30 @@ use zikwall\vktv\constants\Content;
 
 class UserController extends BaseController
 {
+    public function actionList()
+    {
+        $users = (new Query())
+            ->select([
+                '{{%user}}.id', '{{%user}}.username', '{{%user}}.is_premium', '{{%user}}.created_at',
+                '{{%user}}.is_official', '{{%profile}}.name', '{{%profile}}.avatar', '{{%profile}}.public_email'
+            ])
+            ->from('{{%user}}')
+            ->leftJoin('{{%profile}}', '{{%profile}}.user_id={{%user}}.id')
+            ->where(['and',
+                [
+                    '{{%user}}.is_destroy' => 0
+                ],
+                [
+                    'is', '{{%user}}.blocked_at', new Expression('NULL')
+                ]
+            ])->all();
+
+        return $this->response([
+            'code' => 200,
+            'response' => $users
+        ]);
+    }
+    
     public function actionProfile(int $userId)
     {
         $user = (new Query())
