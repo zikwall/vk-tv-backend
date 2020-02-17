@@ -120,7 +120,10 @@ class Friendship extends ActiveRecord
      */
     public static function getSentRequestsQuery(User $user)
     {
-        $query = User::find();
+        $query = User::find() ->select([
+            '{{%user}}.id', '{{%user}}.username', '{{%user}}.is_premium', '{{%user}}.created_at',
+            '{{%user}}.is_official', '{{%profile}}.name', '{{%profile}}.avatar', '{{%profile}}.public_email'
+        ]);
 
         // Users which received a friend requests from given user
         $query->leftJoin('{{%friendship}} recv', 'user.id=recv.friend_user_id AND recv.user_id=:userId', [':userId' => $user->id]);
@@ -130,6 +133,8 @@ class Friendship extends ActiveRecord
         $query->leftJoin('{{%friendship}} snd', 'user.id=snd.user_id AND snd.friend_user_id=:userId', [':userId' => $user->id]);
         $query->andWhere(['IS', 'snd.id', new \yii\db\Expression('NULL')]);
 
+        $query->leftJoin('{{%profile}}', '{{%profile}}.user_id=user.id');
+        
         return $query;
     }
 
@@ -139,7 +144,10 @@ class Friendship extends ActiveRecord
      */
     public static function getReceivedRequestsQuery($user)
     {
-        $query = User::find();
+        $query = User::find() ->select([
+            '{{%user}}.id', '{{%user}}.username', '{{%user}}.is_premium', '{{%user}}.created_at',
+            '{{%user}}.is_official', '{{%profile}}.name', '{{%profile}}.avatar', '{{%profile}}.public_email'
+        ]);
 
         // Users which NOT received a friend requests from given user
         $query->leftJoin('{{%friendship}} recv', 'user.id=recv.friend_user_id AND recv.user_id=:userId', [':userId' => $user->id]);
@@ -149,6 +157,8 @@ class Friendship extends ActiveRecord
         $query->leftJoin('{{%friendship}} snd', 'user.id=snd.user_id AND snd.friend_user_id=:userId', [':userId' => $user->id]);
         $query->andWhere(['IS NOT', 'snd.id', new \yii\db\Expression('NULL')]);
 
+        $query->leftJoin('{{%profile}}', '{{%profile}}.user_id=user.id');
+        
         return $query;
     }
 
