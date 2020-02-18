@@ -269,7 +269,7 @@ class AuthController extends BaseController
                 'public_email' => $user->profile->public_email,
                 'avatar' => $user->profile->avatar
             ],
-            'friends' => Friendship::getFriendsQuery($user->id)->asArray()->all()
+            'friends' => Friendship::getFriendsQuery($user)->asArray()->all()
         ];
     }
 }
