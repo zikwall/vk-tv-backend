@@ -5,6 +5,7 @@ namespace zikwall\vktv\controllers;
 
 use vktv\helpers\AttributesValidator;
 use vktv\helpers\Password;
+use vktv\models\Friendship;
 use vktv\models\User;
 use Yii;
 use vktv\models\forms\LoginForm;
@@ -267,7 +268,8 @@ class AuthController extends BaseController
                 'name' => $user->profile->name,
                 'public_email' => $user->profile->public_email,
                 'avatar' => $user->profile->avatar
-            ]
+            ],
+            'friends' => Friendship::getFriendsQuery($user->id)->asArray()->all()
         ];
     }
 }
