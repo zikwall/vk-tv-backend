@@ -13,6 +13,74 @@ use zikwall\vktv\constants\Content;
 
 class ApiController extends BaseController
 {
+    public function actionBest()
+    {
+        $query = "
+              SELECT *
+              FROM (
+                    SELECT *,
+                    /*если в предыдущей строке категория была та же, нумеруем строки внутри категории*/
+                    /*иначе присваеваем счетчику 1 (т.е. начинаем нумерацию новой категории)*/
+                          IF(@last_category_id=category, @I:=@I+1, @I:=1)N,
+                    /*присваеваем ид категории в переменную*/
+                          @last_category_id := category
+                    FROM content,
+                    /*инициализируем локальные переменные*/
+                        (SELECT @last_category_id := null, @I := 0)T
+                        /*сортируем по категории, затем рейтингу по убыванию*/
+                    ORDER BY category, rating DESC
+              )T
+              /*выводим по 10 строк из каждой секции*/
+              WHERE N <= 20
+        ";
+
+        $result = Yii::$app->db->createCommand($query)->queryAll();
+
+        $sinitizeItems = [];
+        $groupedCounter = [];
+        foreach ($result as $each) {
+            $categoryId = (int) $each['category'] !== 0 ? $each['category'] : Category::getDefaultCategory();
+
+            if (!isset($sinitizeItems[$categoryId]['name'])) {
+                // it is first iteration
+                $sinitizeItems[$categoryId]['name'] = Category::getName($categoryId);
+                $sinitizeItems[$categoryId]['count'] = 0;
+                $sinitizeItems[$categoryId]['items'] = [];
+            }
+
+            $sinitizeItems[$categoryId]['count'] = $sinitizeItems[$categoryId]['count'] + 1;
+            $sinitizeItems[$categoryId]['items'][] =
+                [
+                    'id'                => $each['id'],
+                    'user_id'           => (int) $each['user_id'],
+                    'url'               => $each['url'],
+                    'type'              => (int) $each['type'] === Content::TYPE_CHANNEL ? 'Телеканал' : 'Фильм',
+                    'category'          => Category::getName($each['category']),
+                    'name'              => $each['name'],
+                    'image'             => $each['image'],
+                    'desc'              => $each['desc'],
+                    'rating'            => sprintf('%.1f', $each['rating']),
+                    'age_limit'         => (int) $each['age_limit'],
+                    'created_at'        => (int) $each['created_at'],
+                    'updated_at'        => (int) $each['updated_at'],
+                    'is_auth_required'  => (int) $each['is_auth_required'],
+                    'visibility'        => (int) $each['visibility'],
+                    'pinned'            => (int) $each['pinned'],
+                    'archived'          => (int) $each['archived'],
+                    'use_origin'        => (int) $each['use_origin'],
+                    'default_player'    => $each['default_player'],
+                    'in_main'           => (int) $each['in_main'],
+                    'use_own_player_url' => (int) $each['use_own_player_url'],
+                    'own_player_url'    => $each['own_player_url']
+                ];
+        }
+
+        return $this->response([
+            'code' => 200,
+            'response' => $sinitizeItems
+        ]);
+    }
+    
     public function actionContent(int $offset = 0, int $paginationSize = 20)
     {
         $isAuth = false;
