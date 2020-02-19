@@ -13,6 +13,32 @@ class FriendsRequestController extends BaseController
 {
     use RequestTrait;
 
+    public function actionGetState(int $userId)
+    {
+        if ($this->isRequestOptions()) {
+            return true;
+        }
+
+        if ($this->isUnauthtorized()) {
+            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED);
+        }
+
+        $user = User::find()->where(['id' => $userId])->one();
+        if (!$user) {
+            return $this->response([
+                'code' => 404,
+                'response' => 'Пользователь не найден!'
+            ]);
+        }
+
+        $state = Friendship::getStateForUser($this->getUser(), $user);
+        
+        return $this->response([
+            'code' => 200,
+            'response' => $state
+        ]);
+    }
+    
     public function actionList(int $userId)
     {
         if ($this->isRequestOptions()) {
