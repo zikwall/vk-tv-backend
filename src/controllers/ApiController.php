@@ -74,7 +74,8 @@ class ApiController extends BaseController
                     'default_player'    => $each['default_player'],
                     'in_main'           => (int) $each['in_main'],
                     'use_own_player_url' => (int) $each['use_own_player_url'],
-                    'own_player_url'    => $each['own_player_url']
+                    'own_player_url'    => $each['own_player_url'],
+                    'tags'              => Json::decode($each['tags'])
                 ];
         }
 
@@ -141,7 +142,8 @@ class ApiController extends BaseController
                     'default_player'    => $each['default_player'],
                     'in_main'           => (int) $each['in_main'],
                     'use_own_player_url' => (int) $each['use_own_player_url'],
-                    'own_player_url'    => $each['own_player_url']
+                    'own_player_url'    => $each['own_player_url'],
+                    'tags'              => Json::decode($each['tags'])
                 ];
         }
 
