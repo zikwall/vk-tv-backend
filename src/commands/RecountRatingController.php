@@ -2,7 +2,7 @@
 
 namespace zikwall\vktv\commands;
 
-use app\models\Content;
+use vktv\models\Content;
 use yii\console\Controller;
 use yii\db\Query;
 use yii\helpers\Json;
