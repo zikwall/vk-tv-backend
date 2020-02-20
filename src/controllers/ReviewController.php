@@ -49,7 +49,10 @@ class ReviewController extends BaseController
 
         return $this->response([
             'code' => 200,
-            'response' => !!$exist ? 1 : 0
+            'response' => [
+                'exist' => !!$exist ? 1 : 0,
+                'review' => $exist
+            ]
         ]);
     }
 
