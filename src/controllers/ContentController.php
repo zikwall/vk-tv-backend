@@ -19,7 +19,7 @@ class ContentController extends BaseController
     {
         // TODO add Useful
         $query = (new Query())
-            ->select(['{{%review}}.value', '{{%review}}.content', '{{%user}}.username', '{{%profile}}.name', '{{%profile}}.avatar', '{{%review}}.user_id'])
+            ->select(['{{%review}}.value', '{{%review}}.content', '{{%user}}.username', '{{%profile}}.name', '{{%profile}}.avatar', '{{%review}}.user_id', '{{%review}}.created_at'])
             ->from('{{%review}}')
             ->leftJoin('{{%user}}', '{{%user}}.id={{%review}}.user_id')
             ->leftJoin('{{%profile}}', '{{%profile}}.user_id={{%user}}.id')
