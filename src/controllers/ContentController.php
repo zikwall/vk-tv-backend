@@ -19,7 +19,7 @@ class ContentController extends BaseController
     {
         // TODO add Useful
         $query = (new Query())
-            ->select(['{{%review}}.value', '{{%review}}.content', '{{%user}}.username', '{{%profile}}.name'])
+            ->select(['{{%review}}.value', '{{%review}}.content', '{{%user}}.username', '{{%profile}}.name', '{{%profile}}.avatar', '{{%review}}.user_id'])
             ->from('{{%review}}')
             ->leftJoin('{{%user}}', '{{%user}}.id={{%review}}.user_id')
             ->leftJoin('{{%profile}}', '{{%profile}}.user_id={{%user}}.id')
@@ -35,8 +35,12 @@ class ContentController extends BaseController
             $items[] = [
                 'value'     => (int) $each['value'],
                 'content'   => $each['content'],
-                'username'  => $each['username'],
-                'name'      => $each['name']
+                'user' => [
+                    'id'        => $each['user_id'],
+                    'username'  => $each['username'],
+                    'name'      => $each['name'],
+                    'avatar'    => $each['avatar']
+                ]
             ];
         }
 
