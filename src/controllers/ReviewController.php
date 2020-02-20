@@ -73,7 +73,8 @@ class ReviewController extends BaseController
         if ($this->isRequestPost() === false) {
             return $this->response([
                 'code' => 100,
-                'response' => 'Не правильно сформированный HTTP запрос.'
+                'response' => 'Не правильно сформированный HTTP запрос.',
+                'attributes' => []
             ]);
         }
 
@@ -98,7 +99,8 @@ class ReviewController extends BaseController
         if (!$contentObj) {
             return $this->response([
                 'code' => 100,
-                'message' => 'Контент для отзыва не найден'
+                'message' => 'Контент для отзыва не найден',
+                'attributes' => []
             ]);
         }
 
@@ -107,7 +109,8 @@ class ReviewController extends BaseController
         if ($exist) {
             return $this->response([
                 'code' => 100,
-                'message' => 'Вы уже оставляли отзыв.'
+                'message' => 'Вы уже оставляли отзыв.',
+                'attributes' => []
             ]);
         }
 
@@ -121,13 +124,15 @@ class ReviewController extends BaseController
         if (!$reviewObj->save()) {
             return $this->response([
                 'code' => 100,
-                'message' => 'Не удалось оставить отзыв, что-то пошло не так...'
+                'message' => 'Не удалось оставить отзыв, что-то пошло не так...',
+                'attributes' => []
             ]);
         }
 
         return $this->response([
             'code' => 200,
-            'message' => 'Вы успешно оставили отзыв! В скором времени оно появится на сервисе.'
+            'message' => 'Вы успешно оставили отзыв! В скором времени оно появится на сервисе.',
+            'attributes' => []
         ]);
     }
 
@@ -144,7 +149,8 @@ class ReviewController extends BaseController
         if ($this->isRequestPost() === false) {
             return $this->response([
                 'code' => 100,
-                'response' => 'Не правильно сформированный HTTP запрос.'
+                'response' => 'Не правильно сформированный HTTP запрос.',
+                'attributes' => []
             ]);
         }
 
@@ -170,7 +176,8 @@ class ReviewController extends BaseController
         if (!$reviewObj) {
             return $this->response([
                 'code' => 100,
-                'message' => 'Не удалось найти отзыв...'
+                'message' => 'Не удалось найти отзыв...',
+                'attributes' => []
             ]);
         }
 
@@ -180,13 +187,15 @@ class ReviewController extends BaseController
         if (!$reviewObj->save()) {
             return $this->response([
                 'code' => 100,
-                'message' => 'Не удалось отредактировать отзыв, что-то пошло не так...'
+                'message' => 'Не удалось отредактировать отзыв, что-то пошло не так...',
+                'attributes' => []
             ]);
         }
 
         return $this->response([
             'code' => 200,
-            'message' => 'Вы успешно отредактировлаи отзыв!'
+            'message' => 'Вы успешно отредактировлаи отзыв!',
+            'attributes' => []
         ]);
     }
 
@@ -203,7 +212,8 @@ class ReviewController extends BaseController
         if ($this->isRequestPost() === false) {
             return $this->response([
                 'code' => 100,
-                'response' => 'Не правильно сформированный HTTP запрос.'
+                'response' => 'Не правильно сформированный HTTP запрос.',
+                'attributes' => []
             ]);
         }
 
@@ -225,20 +235,23 @@ class ReviewController extends BaseController
         if (!$reviewObj) {
             return $this->response([
                 'code' => 100,
-                'message' => 'Не удалось найти отзыв...'
+                'message' => 'Не удалось найти отзыв...',
+                'attributes' => []
             ]);
         }
 
         if (!$reviewObj->delete()) {
             return $this->response([
                 'code' => 100,
-                'message' => 'Не удалось удалить, что-то пошло не так...'
+                'message' => 'Не удалось удалить, что-то пошло не так...',
+                'attributes' => []
             ]);
         }
 
         return $this->response([
             'code' => 200,
-            'message' => 'Отзыв успешно удален'
+            'message' => 'Отзыв успешно удален',
+            'attributes' => []
         ]);
     }
 }
