@@ -15,6 +15,40 @@ class ContentController extends BaseController
 {
     use RequestTrait;
 
+    public function actionReviews(int $contentId, int $offset = 0, int $paginationSize = 2)
+    {
+        // TODO add Useful
+        $query = (new Query())
+            ->select(['{{%review}}.value', '{{%review}}.content', '{{%user}}.username', '{{%profile}}.name'])
+            ->from('{{%review}}')
+            ->leftJoin('{{%user}}', '{{%user}}.id={{%review}}.user_id')
+            ->leftJoin('{{%profile}}', '{{%profile}}.user_id={{%user}}.id');
+
+        $cloneQuery = clone $query;
+        $count = $cloneQuery->count();
+        $countPages = (int) ceil($count/$paginationSize);
+
+        $items = [];
+        $query->offset($offset * $paginationSize)->limit($paginationSize);
+        foreach ($query->all() as $each) {
+            $items[] = [
+                'value'     => (int) $each['value'],
+                'content'   => $each['content'],
+                'username'  => $each['username'],
+                'name'      => $each['name']
+            ];
+        }
+
+        return $this->response([
+            'code' => 200,
+            'response' => [
+                'count_pages' => $countPages,
+                'reviews' => $items,
+                'end' => $countPages === $offset + 1
+            ]
+        ]);
+    }
+
     public function actionOwn()
     {
         if (Yii::$app->request->getIsOptions()) {
