@@ -15,6 +15,44 @@ class ReviewController extends BaseController
 {
     use RequestTrait;
 
+    public function actionExist()
+    {
+        if (Yii::$app->request->getIsOptions()) {
+            return true;
+        }
+
+        if ($this->isUnauthtorized()) {
+            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
+        }
+
+        if ($this->isRequestPost() === false) {
+            return $this->response([
+                'code' => 100,
+                'response' => 'Не правильно сформированный HTTP запрос.',
+                'attributes' => []
+            ]);
+        }
+
+        $reviewAttributes = $this->getJSONBody();
+        $user = $this->getUser();
+
+        $validate = AttributesValidator::isEveryRequired($reviewAttributes, ['id']);
+        if ($validate['state'] === false) {
+            return $this->response(
+                array_merge(Validation::NOT_REQUIRED_ATTRIBUTES, ['attributes' => $validate['missing']
+                ])
+            );
+        }
+
+        $id = $reviewAttributes['id'];
+        $exist = Review::find()->where(['content_id' => $id, 'user_id' => $user->getId()])->one();
+
+        return $this->response([
+            'code' => 200,
+            'response' => !!$exist ? 1 : 0
+        ]);
+    }
+
     public function actionReviews(int $contentId, int $offset = 0, int $paginationSize = 20)
     {
         $query = (new Query())
