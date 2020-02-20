@@ -102,6 +102,15 @@ class ReviewController extends BaseController
             ]);
         }
 
+        $exist = Review::find()->where(['content_id' => $id, 'user_id' => $user->getId()])->one();
+
+        if ($exist) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Вы уже оставляли отзыв.'
+            ]);
+        }
+
         $reviewObj = new Review();
         $reviewObj->content_id = $contentObj->id;
         $reviewObj->user_id = $user->getId();
