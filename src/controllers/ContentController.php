@@ -37,7 +37,7 @@ class ContentController extends BaseController
                 'content'   => $each['content'],
                 'date'      => date('d.m.Y', $each['created_at']),
                 'usefulCount' => 0,
-                'isOwnUseful' => false,
+                'isOwnUseful' => null,
                 'user' => [
                     'id'        => $each['user_id'],
                     'username'  => $each['username'],
