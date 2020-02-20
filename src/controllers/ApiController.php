@@ -8,6 +8,7 @@ use vktv\helpers\EPGHelper;
 use vktv\helpers\PlaylistHelper;
 use Yii;
 use yii\db\Query;
+use yii\helpers\Json;
 use yii\web\Response;
 use zikwall\vktv\constants\Content;
 
@@ -61,7 +62,7 @@ class ApiController extends BaseController
                     'desc'              => $each['desc'],
                     'rating'            => sprintf('%.1f', $each['rating']),
                     'votes'             => (int) $each['votes'],
-                    'rating_groups'     => $each['rating_groups'],
+                    'rating_groups'     => Json::decode($each['rating_groups']),
                     'age_limit'         => (int) $each['age_limit'],
                     'created_at'        => (int) $each['created_at'],
                     'updated_at'        => (int) $each['updated_at'],
@@ -128,7 +129,7 @@ class ApiController extends BaseController
                     'desc'              => $each['desc'],
                     'rating'            => sprintf('%.1f', $each['rating']),
                     'votes'             => (int) $each['votes'],
-                    'rating_groups'     => $each['rating_groups'],
+                    'rating_groups'     => Json::decode($each['rating_groups']),
                     'age_limit'         => (int) $each['age_limit'],
                     'created_at'        => (int) $each['created_at'],
                     'updated_at'        => (int) $each['updated_at'],
