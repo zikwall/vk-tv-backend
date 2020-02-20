@@ -35,6 +35,9 @@ class ContentController extends BaseController
             $items[] = [
                 'value'     => (int) $each['value'],
                 'content'   => $each['content'],
+                'date'      => date('d-m-Y', $each['created_at']),
+                'usefulCount' => 0,
+                'isOwnUseful' => false,
                 'user' => [
                     'id'        => $each['user_id'],
                     'username'  => $each['username'],
