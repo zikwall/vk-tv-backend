@@ -2,10 +2,19 @@
 
 namespace zikwall\vktv\controllers;
 
+use Yii;
+use vktv\models\Content;
+use vktv\models\Review;
 use yii\db\Query;
+use zikwall\vktv\constants\Auth;
+use zikwall\vktv\RequestTrait;
+use vktv\helpers\AttributesValidator;
+use zikwall\vktv\constants\Validation;
 
 class ReviewController extends BaseController
 {
+    use RequestTrait;
+
     public function actionReviews(int $contentId, int $offset = 0, int $paginationSize = 20)
     {
         $query = (new Query())
@@ -53,16 +62,174 @@ class ReviewController extends BaseController
 
     public function actionAdd()
     {
+        if (Yii::$app->request->getIsOptions()) {
+            return true;
+        }
 
+        if ($this->isUnauthtorized()) {
+            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
+        }
+
+        if ($this->isRequestPost() === false) {
+            return $this->response([
+                'code' => 100,
+                'response' => 'Не правильно сформированный HTTP запрос.'
+            ]);
+        }
+
+        $reviewAttributes = $this->getJSONBody();
+        $user = $this->getUser();
+
+        $validate = AttributesValidator::isEveryRequired($reviewAttributes, ['id', 'content', 'value']);
+
+        if ($validate['state'] === false) {
+            return $this->response(
+                    array_merge(Validation::NOT_REQUIRED_ATTRIBUTES, ['attributes' => $validate['missing']
+                ])
+            );
+        }
+
+        $id         = $reviewAttributes['id'];
+        $content    = $reviewAttributes['content'];
+        $value      = $reviewAttributes['value'];
+
+        $contentObj = Content::find()->where(['id' => $id])->one();
+
+        if (!$contentObj) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Контент для отзыва не найден'
+            ]);
+        }
+
+        $reviewObj = new Review();
+        $reviewObj->content_id = $contentObj->id;
+        $reviewObj->user_id = $user->getId();
+        $reviewObj->content = $content;
+        $reviewObj->value = $value;
+        $reviewObj->created_at = time();
+
+        if (!$reviewObj->save()) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Не удалось оставить отзыв, что-то пошло не так...'
+            ]);
+        }
+
+        return $this->response([
+            'code' => 200,
+            'message' => 'Вы успешно оставили отзыв! В скором времени оно появится на сервисе.'
+        ]);
     }
 
     public function actionEdit()
     {
+        if (Yii::$app->request->getIsOptions()) {
+            return true;
+        }
 
+        if ($this->isUnauthtorized()) {
+            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
+        }
+
+        if ($this->isRequestPost() === false) {
+            return $this->response([
+                'code' => 100,
+                'response' => 'Не правильно сформированный HTTP запрос.'
+            ]);
+        }
+
+        $reviewAttributes = $this->getJSONBody();
+        $user = $this->getUser();
+
+        $validate = AttributesValidator::isEveryRequired($reviewAttributes, ['id', 'content_id', 'content', 'value']);
+
+        if ($validate['state'] === false) {
+            return $this->response(
+                array_merge(Validation::NOT_REQUIRED_ATTRIBUTES, ['attributes' => $validate['missing']
+                ])
+            );
+        }
+
+        $id         = $reviewAttributes['id'];
+        $content    = $reviewAttributes['content'];
+        $value      = $reviewAttributes['value'];
+        $content_id = $reviewAttributes['content_id'];
+
+        $reviewObj = Review::find()->where(['id' => $id, 'user_id' => $user->getId(), 'content_id' => $content_id])->one();
+
+        if (!$reviewObj) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Не удалось найти отзыв...'
+            ]);
+        }
+
+        $reviewObj->content = $content;
+        $reviewObj->value = $value;
+
+        if (!$reviewObj->save()) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Не удалось отредактировать отзыв, что-то пошло не так...'
+            ]);
+        }
+
+        return $this->response([
+            'code' => 200,
+            'message' => 'Вы успешно отредактировлаи отзыв!'
+        ]);
     }
 
     public function actionDelete()
     {
+        if (Yii::$app->request->getIsOptions()) {
+            return true;
+        }
 
+        if ($this->isUnauthtorized()) {
+            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
+        }
+
+        if ($this->isRequestPost() === false) {
+            return $this->response([
+                'code' => 100,
+                'response' => 'Не правильно сформированный HTTP запрос.'
+            ]);
+        }
+
+        $reviewAttributes = $this->getJSONBody();
+        $user = $this->getUser();
+
+        $validate = AttributesValidator::isEveryRequired($reviewAttributes, ['id']);
+
+        if ($validate['state'] === false) {
+            return $this->response(
+                array_merge(Validation::NOT_REQUIRED_ATTRIBUTES, ['attributes' => $validate['missing']
+                ])
+            );
+        }
+
+        $id = $reviewAttributes['id'];
+        $reviewObj = Review::find()->where(['id' => $id, 'user_id' => $user->getId()])->one();
+
+        if (!$reviewObj) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Не удалось найти отзыв...'
+            ]);
+        }
+
+        if (!$reviewObj->delete()) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Не удалось удалить, что-то пошло не так...'
+            ]);
+        }
+
+        return $this->response([
+            'code' => 200,
+            'message' => 'Отзыв успешно удален'
+        ]);
     }
 }
