@@ -73,11 +73,9 @@ class PremiumController extends BaseController
         if ($this->getUser()->makePremium($key)) {
             return $this->response([
                 'code' => 200,
-                'response' => [
-                    'message' => "Успешно активирован премиум до " . date('d-m-Y H:i', $key['expired']),
-                    'user' => [
-                        'is_premium' => $this->getUser()->is_premium && $this->getUser()->premium_ttl > time(),
-                    ]
+                'message' => "Успешно активирован премиум до " . date('d-m-Y H:i', $key['expired']),
+                'user' => [
+                    'is_premium' => $this->getUser()->is_premium && $this->getUser()->premium_ttl > time(),
                 ]
             ]);
         }
