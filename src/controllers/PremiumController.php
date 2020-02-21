@@ -45,7 +45,7 @@ class PremiumController extends BaseController
 
         $countOfActivations = (new Query())->from('{{%user_premium}}')->count();
 
-        if ((int) $key['activation_time_limit'] < time() || (int) $countOfActivations > (int) $key['activation_count_limit']) {
+        if ((int) $key['activation_time_limit'] < time() || (int) $countOfActivations >= (int) $key['activation_count_limit']) {
             return $this->response([
                 'code' => 100,
                 'message' => 'Вы не можете активировать данный премиум, он уже все...',

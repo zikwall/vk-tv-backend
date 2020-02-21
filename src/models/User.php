@@ -319,13 +319,21 @@ class User extends ActiveRecord implements IdentityInterface
         ]);
     }
 
-    public function makePremium($ttl) : bool
+    public function makePremium($premium) : bool
     {
         $this->is_premium = 1;
-        $this->premium_ttl = $ttl;
-        $affectedRows = $this->updateAttributes(['is_premium', 'premium_ttl']);
+        $this->premium_ttl = $premium['expired'];
         
-        return $affectedRows > 0;
+        if ($this->save()) {
+            Yii::$app->db->createCommand()->insert('{{%user_premium}}', [
+                'user_id' => $this->getId(),
+                'key_id' => $premium['id']
+            ])->execute();
+            
+            return true;
+        }
+        
+        return false;
     }
     
     public function isAlreadyConfirmed() : bool
