@@ -75,7 +75,11 @@ class ApiController extends BaseController
                     'in_main'           => (int) $each['in_main'],
                     'use_own_player_url' => (int) $each['use_own_player_url'],
                     'own_player_url'    => $each['own_player_url'],
-                    'tags'              => Json::decode($each['tags'])
+                    'tags'              => Json::decode($each['tags']),
+                    // extra props
+                    'ad_exist'          => (int) !empty($each['ad_url']),
+                    // возможно это немного не правильно
+                    'native_available'  => (int) (empty($each['ad_url']) && (int) $each['use_origin'] === 1)
                 ];
         }
 
@@ -143,7 +147,11 @@ class ApiController extends BaseController
                     'in_main'           => (int) $each['in_main'],
                     'use_own_player_url' => (int) $each['use_own_player_url'],
                     'own_player_url'    => $each['own_player_url'],
-                    'tags'              => Json::decode($each['tags'])
+                    'tags'              => Json::decode($each['tags']),
+                    // extra props
+                    'ad_exist'          => (int) !empty($each['ad_url']),
+                    // возможно это немного не правильно
+                    'native_available'  => (int) (empty($each['ad_url']) && (int) $each['use_origin'] === 1)
                 ];
         }
 
