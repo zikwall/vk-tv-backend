@@ -10,7 +10,7 @@ use Yii;
  * @property int $id
  * @property int $content_id
  * @property int|null $user_id
- * @property int $cause
+ * @property string $cause
  * @property string|null $description_cause
  * @property string|null $comment
  * @property int|null $resolved
@@ -22,7 +22,7 @@ class Report extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%report}}';
+        return 'report';
     }
 
     /**
@@ -32,9 +32,9 @@ class Report extends \yii\db\ActiveRecord
     {
         return [
             [['content_id', 'cause'], 'required'],
-            [['content_id', 'user_id', 'cause', 'resolved'], 'integer'],
+            [['content_id', 'user_id', 'resolved'], 'integer'],
             [['comment'], 'string'],
-            [['description_cause'], 'string', 'max' => 100],
+            [['cause', 'description_cause'], 'string', 'max' => 100],
         ];
     }
 
