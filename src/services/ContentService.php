@@ -25,7 +25,7 @@ class ContentService
         $content->created_at            = time();
         $content->updated_at            = !!$content->id ? time() : 0;
         $content->is_auth_required      = 0;
-        $content->visibility            = \zikwall\vktv\constants\Content::VISIBILITY_PUBLIC;
+        $content->visibility            = (int) $contentAttributes['visibility'];
         $content->pinned                = (int) $contentAttributes['is_pinned'];
         $content->archived              = (int) $contentAttributes['is_archive'];
         $content->active                = (int) $contentAttributes['is_active'];
