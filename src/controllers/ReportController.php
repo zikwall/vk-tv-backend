@@ -26,7 +26,7 @@ class ReportController extends BaseController
             ->from('{{%report}}')
             ->leftJoin('{{%content}}', '{{%content}}.id={{%report}}.content_id')
             ->where([
-                'user_id' => $this->getUser()->getId(),
+                '{{%report}}.user_id' => $this->getUser()->getId(),
                 'resolved' => 0
             ]);
 
