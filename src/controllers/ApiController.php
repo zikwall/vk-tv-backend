@@ -88,7 +88,7 @@ class ApiController extends BaseController
             'response' => $sinitizeItems
         ]);
     }
-    
+
     public function actionContent(int $offset = 0, int $paginationSize = 20)
     {
         $isAuth = false;
@@ -175,7 +175,7 @@ class ApiController extends BaseController
          * - https
          */
         $playlists = (new Query())
-            ->select(['epg_id', 'name', 'url', 'image', 'use_origin', 'xmltv_id', 'category'])
+            ->select(['id', 'epg_id', 'name', 'url', 'image', 'use_origin', 'xmltv_id', 'category'])
             ->from('playlist')
             ->where(['and',
                 [
@@ -195,7 +195,7 @@ class ApiController extends BaseController
 
             foreach ($playlists->all() as $playlist) {
                 if ($byKeys === 1) {
-                    $response[$playlist['epg_id']] = PlaylistHelper::sanitizeItem($playlist, true);
+                    $response[$playlist['id']] = PlaylistHelper::sanitizeItem($playlist, true);
                 } else {
                     $response[] = PlaylistHelper::sanitizeItem($playlist, true);
                 }
