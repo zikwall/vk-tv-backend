@@ -17,13 +17,13 @@ class ContentService
         $content->url                   = $contentAttributes['url'];
         $content->type                  = $contentAttributes['type'];
         $content->category              = $contentAttributes['category'];
-        $content->image                 = $contentAttributes['image_url'];
+        $content->image                 = empty(trim($contentAttributes['image_url'])) ? null : $contentAttributes['image_url'];
         $content->desc                  = $contentAttributes['desc'];
         $content->use_own_player_url    = (int) $contentAttributes['use_own_player'];
         $content->own_player_url        = $contentAttributes['own_player_url'] ?? null;
         $content->age_limit             = (int) $contentAttributes['is_18_years_old'] ? 50 : 10;
-        $content->created_at            = time();
-        $content->updated_at            = !!$content->id ? time() : 0;
+        $content->created_at            = !$content->isNewRecord ? $content->created_at : time();
+        $content->updated_at            = !$content->isNewRecord ? time() : 0;
         $content->is_auth_required      = 0;
         $content->visibility            = (int) $contentAttributes['visibility'];
         $content->pinned                = (int) $contentAttributes['is_pinned'];
@@ -32,8 +32,8 @@ class ContentService
         $content->ad_url                = $contentAttributes['ad_url'];
         $content->use_origin            = $contentAttributes['use_origin'];
         $content->default_player        = $contentAttributes['default_player'];
-        $content->blocked               = !!$content->id ? 0 : $content->blocked;
-        $content->rating                = !!$content->id ? null : $content->rating;
+        $content->blocked               = !$content->isNewRecord ? 0 : $content->blocked;
+        $content->rating                = !$content->isNewRecord ? 0 : $content->rating;
 
         if (!$content->save()) {
             return false;
