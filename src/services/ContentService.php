@@ -20,10 +20,10 @@ class ContentService
         $content->image                 = $contentAttributes['image_url'];
         $content->desc                  = $contentAttributes['desc'];
         $content->use_own_player_url    = (int) $contentAttributes['use_own_player'];
-        $content->own_player_url        = $contentAttributes['own_player_url'];
+        $content->own_player_url        = $contentAttributes['own_player_url'] ?? null;
         $content->age_limit             = (int) $contentAttributes['is_18_years_old'] ? 50 : 10;
         $content->created_at            = time();
-        $content->updated_at            = 0;
+        $content->updated_at            = !!$content->id ? time() : 0;
         $content->is_auth_required      = 0;
         $content->visibility            = \zikwall\vktv\constants\Content::VISIBILITY_PUBLIC;
         $content->pinned                = (int) $contentAttributes['is_pinned'];
@@ -32,7 +32,8 @@ class ContentService
         $content->ad_url                = $contentAttributes['ad_url'];
         $content->use_origin            = $contentAttributes['use_origin'];
         $content->default_player        = $contentAttributes['default_player'];
-        $content->blocked               = 0; //  Omg
+        $content->blocked               = !!$content->id ? 0 : $content->blocked;
+        $content->rating                = !!$content->id ? null : $content->rating;
 
         if (!$content->save()) {
             return false;
