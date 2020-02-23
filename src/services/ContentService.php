@@ -31,6 +31,7 @@ class ContentService
         $content->active                = (int) $contentAttributes['is_active'];
         $content->ad_url                = $contentAttributes['ad_url'];
         $content->use_origin            = $contentAttributes['use_origin'];
+        $content->blocked               = 0;
 
         if (!$content->save()) {
             return false;
@@ -38,7 +39,7 @@ class ContentService
 
         return $content;
     }
-    
+
     public static function savePlaylistAfterContent(Playlist $playlist, Content $content, IdentityInterface $user)
     {
         $playlist->epg_id       = 0;
@@ -57,7 +58,7 @@ class ContentService
         if (!$playlist->save()) {
             return false;
         }
-        
+
         return $playlist;
     }
 

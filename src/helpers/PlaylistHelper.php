@@ -21,6 +21,7 @@ class PlaylistHelper
     public static function sanitizeItem(array $playlist, bool $useCategory = false) : array
     {
         $pl = [
+            'id'            => $playlist['id'],
             'epg_id'        => $playlist['epg_id'],
             'name'          => $playlist['name'],
             'url'           => $playlist['url'],
