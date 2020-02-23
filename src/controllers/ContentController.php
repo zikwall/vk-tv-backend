@@ -219,7 +219,7 @@ class ContentController extends BaseController
         if (!$content) {
             return $this->response([
                 'code' => 100,
-                'response' => 'К сожалению данный контент не найден или у Вас нет доступа...'
+                'message' => 'К сожалению данный контент не найден или у Вас нет доступа...'
             ]);
         }
 
