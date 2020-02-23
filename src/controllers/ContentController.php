@@ -195,6 +195,53 @@ class ContentController extends BaseController
         if ($this->isUnauthtorized()) {
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
         }
+
+        if ($this->isRequestPost() === false) {
+            return $this->response([
+                'code' => 100,
+                'message' => 'Не правильный запрос.',
+                'attributes' => []
+            ]);
+        }
+
+        $user = $this->getUser();
+        $contentAttributes = $this->getJSONBody();
+        $id = $contentAttributes['content_id'];
+
+        $content = \vktv\models\Content::find()
+            ->select('{{%content}}.*')
+            ->from('{{%content}}')
+            ->leftJoin('{{%user}}', '{{%content}}.user_id={{%user}}.id')
+            ->where(['{{%content}}.id' => $id])
+            ->andWhere(['{{%user}}.id' => $user->getId()])
+            ->one();
+
+        if (!$content) {
+            return $this->response([
+                'code' => 100,
+                'response' => 'К сожалению данный контент не найден или у Вас нет доступа...'
+            ]);
+        }
+
+        $inMain = (int) $content->in_main === 1;
+        if ($content->delete() !== false) {
+            if ($inMain) {
+                Playlist::deleteAll([
+                    'content_id' => $id,
+                    'user_id' => $user->getId()
+                ]);
+            }
+
+            return $this->response([
+                'code' => 200,
+                'message' => 'Контент успешно удален!'
+            ]);
+        }
+
+        return $this->response([
+            'code' => 100,
+            'message' => 'Что-то пошло не так... Мы не смогли удалить контент.'
+        ]);
     }
 
     public function actionEdit(int $id)
