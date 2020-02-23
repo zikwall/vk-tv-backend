@@ -95,7 +95,7 @@ class EmbedController extends Controller
             ->from('playlist')
             ->where(['and',
                 [
-                    'epg_id' => $epg
+                    'id' => $epg
                 ],
                 [
                     'blocked' => 0
