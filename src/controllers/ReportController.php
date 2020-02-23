@@ -22,8 +22,9 @@ class ReportController extends BaseController
         }
 
         $query = (new Query())
-            ->select('*')
+            ->select(['{{%report}}.*', '{{%content}}.name', '{{%content}}.image'])
             ->from('{{%report}}')
+            ->leftJoin('{{%content}}', '{{%content}}.id={{%report}}.content_id')
             ->where([
                 'user_id' => $this->getUser()->getId(),
                 'resolved' => 0
