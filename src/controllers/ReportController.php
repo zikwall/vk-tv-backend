@@ -3,11 +3,37 @@
 namespace zikwall\vktv\controllers;
 
 use vktv\models\Report;
+use yii\db\Query;
+use zikwall\vktv\constants\Auth;
 use zikwall\vktv\RequestTrait;
 
 class ReportController extends BaseController
 {
     use RequestTrait;
+
+    public function actionOwn()
+    {
+        if ($this->isRequestOptions()) {
+            return true;
+        }
+
+        if ($this->isUnauthtorized()) {
+            return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
+        }
+
+        $query = (new Query())
+            ->select('*')
+            ->from('{{%report}}')
+            ->where([
+                'user_id' => $this->getUser()->getId(),
+                'resolved' => 0
+            ]);
+
+        return $this->response([
+            'code' => 200,
+            'response' => $query->all()
+        ]);
+    }
 
     public function actionSend()
     {
