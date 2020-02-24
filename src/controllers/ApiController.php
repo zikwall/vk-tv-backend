@@ -29,7 +29,7 @@ class ApiController extends BaseController
                     /*инициализируем локальные переменные*/
                         (SELECT @last_category_id := null, @I := 0)T
                         /*сортируем по категории, затем рейтингу по убыванию*/
-                    ORDER BY category, rating DESC
+                    ORDER BY category, rating, votes DESC
               )T
               /*выводим по 10 строк из каждой секции*/
               WHERE N <= 20
