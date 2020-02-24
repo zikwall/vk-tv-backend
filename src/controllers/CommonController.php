@@ -9,8 +9,11 @@ class CommonController extends BaseController
         return $this->response([
             'code' => 200,
             'socials' => [
-                'telegram' => 'https://t.me/playhub_community',
-                'vk' => '',
+                'telegram' => [
+                    'label' => 'Мы в Telegram',
+                    'link' => 'https://t.me/playhub_community',
+                ],
+                'vk' => [],
             ]
         ]);
     }
