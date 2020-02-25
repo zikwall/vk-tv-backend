@@ -176,7 +176,10 @@ class ContentController extends BaseController
             return $this->response([
                 'code' => 200,
                 'response' => sprintf('Все нормально в скором времени Вы сможете увидеть свой контент!%s',
-                    $withPlaylist ? ' И на главной тоже!' : '')
+                    $withPlaylist ? ' И на главной тоже!' : ''),
+                'new_content' => [
+                    'id' => $content->id
+                ]
             ]);
         }
 
@@ -299,7 +302,10 @@ class ContentController extends BaseController
                 return $this->response([
                     'code' => 200,
                     'response' => sprintf('Все нормально Вы успешно обновили данные!%s',
-                        $withPlaylist ? ' И на главной тоже!' : '')
+                        $withPlaylist ? ' И на главной тоже!' : ''),
+                    'edit_content' => [
+                        'id' => $content->id
+                    ]
                 ]);
             }
 
