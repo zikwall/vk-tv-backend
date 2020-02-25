@@ -274,29 +274,40 @@ class ContentController extends BaseController
             ]);
         }
 
-        $playlist = Playlist::find()
-            ->where(['and', ['user_id' => $user->getId(), 'content_id' => $content->id]])
-            ->one();
-
         if ($this->isRequestPost()) {
-            $updateToPlaylist = false;
             $contentAttributes = $this->getJSONBody();
-
             $validate = SimpleValidator::validateContentForm($contentAttributes);
 
             if ($validate['code'] === 100) {
                 return $this->response($validate);
             }
 
-            if ($contentAttributes['in_main'] && $user->is_official === 1) {
-                $updateToPlaylist = true;
-            }
-
+            $withPlaylist = false;
             if (ContentService::saveWithActiveRecord($content, $contentAttributes, $user) !== false) {
-                $withPlaylist = false;
+                /**
+                 * Update related playlist
+                 */
+                if ((int) $content->in_main === 1 && (int) $user->is_official === 1) {
+                    if ((int) $contentAttributes['in_main'] === 0) {
+                        // if off
+                        Playlist::deleteAll([
+                            'content_id' => $content->id,
+                            'user_id' => $user->getId()
+                        ]);
+                    } else {
+                        // check exist & update/create
+                        $playlist = Playlist::find()
+                            ->where(['and', ['user_id' => $user->getId(), 'content_id' => $content->id]])
+                            ->one();
 
-                if ($updateToPlaylist && ContentService::savePlaylistAfterContent($playlist, $content, $user) !== false) {
-                    $withPlaylist = true;
+                        if (!$playlist) {
+                            $playlist = new Playlist();
+                        }
+
+                        if (ContentService::savePlaylistAfterContent($playlist, $content, $user) !== false) {
+                            $withPlaylist = true;
+                        }
+                    }
                 }
 
                 return $this->response([
