@@ -250,7 +250,21 @@ class ReviewController extends BaseController
         return $this->response([
             'code' => 200,
             'message' => 'Вы успешно отредактировлаи отзыв!',
-            'attributes' => []
+            'attributes' => [],
+            'edit_review' => [
+                'id' => $reviewObj->id,
+                'value'     => (int) $reviewObj->value,
+                'content'   => $reviewObj->value,
+                'date'      => date('d.m.Y', $reviewObj->created_at),
+                'usefulCount' => 0,
+                'isOwnUseful' => null,
+                'user' => [
+                    'id'        => $user->getId(),
+                    'username'  => $user->username,
+                    'name'      => $user->profile->name,
+                    'avatar'    => $user->profile->avatar
+                ]
+            ]
         ]);
     }
 
