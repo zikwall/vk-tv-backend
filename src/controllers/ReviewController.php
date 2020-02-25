@@ -177,7 +177,7 @@ class ReviewController extends BaseController
             'new_review' => [
                 'id' => $reviewObj->id,
                 'value'     => (int) $reviewObj->value,
-                'content'   => $reviewObj->value,
+                'content'   => $reviewObj->content,
                 'date'      => date('d.m.Y', $reviewObj->created_at),
                 'usefulCount' => 0,
                 'isOwnUseful' => null,
@@ -254,7 +254,7 @@ class ReviewController extends BaseController
             'edit_review' => [
                 'id' => $reviewObj->id,
                 'value'     => (int) $reviewObj->value,
-                'content'   => $reviewObj->value,
+                'content'   => $reviewObj->content,
                 'date'      => date('d.m.Y', $reviewObj->created_at),
                 'usefulCount' => 0,
                 'isOwnUseful' => null,
