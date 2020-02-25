@@ -17,10 +17,10 @@ class ContentService
         $content->url                   = $contentAttributes['url'];
         $content->type                  = $contentAttributes['type'];
         $content->category              = $contentAttributes['category'];
-        $content->image                 = empty(trim($contentAttributes['image_url'])) ? null : $contentAttributes['image_url'];
+        $content->image                 = empty(trim($contentAttributes['image_url'])) ? '' : $contentAttributes['image_url'];
         $content->desc                  = $contentAttributes['desc'];
         $content->use_own_player_url    = (int) $contentAttributes['use_own_player'];
-        $content->own_player_url        = $contentAttributes['own_player_url'] ?? null;
+        $content->own_player_url        = $contentAttributes['own_player_url'] ?? '';
         $content->age_limit             = (int) $contentAttributes['is_18_years_old'] ? 50 : 10;
         $content->created_at            = !$content->isNewRecord ? $content->created_at : time();
         $content->updated_at            = !$content->isNewRecord ? time() : 0;
