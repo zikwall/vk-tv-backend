@@ -33,7 +33,7 @@ class UserController extends BaseController
             'response' => $users
         ]);
     }
-    
+
     public function actionProfile(int $userId)
     {
         $user = (new Query())
@@ -74,6 +74,12 @@ class UserController extends BaseController
             return true;
         }
 
+        $isOwner = false;
+
+        if ($this->isUnauthtorized() === false) {
+            $isOwner = $userId === $this->getUser()->getId();
+        }
+
         $content = (new Query())
             ->select('*')
             ->from('{{%content}}')
@@ -85,10 +91,13 @@ class UserController extends BaseController
                 [
                     'blocked' => 0,
                 ],
-                [
-                    '!=', 'visibility', Content::VISIBILITY_PRIVATE
-                ]
             ]);
+
+        if ($isOwner === false) {
+            $content->andWhere([
+                '!=', 'visibility', Content::VISIBILITY_PRIVATE
+            ]);
+        }
 
         $sinitizeItems = [];
         foreach ($content->all() as $each) {
