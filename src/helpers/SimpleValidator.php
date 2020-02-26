@@ -42,7 +42,7 @@ class SimpleValidator
             }
         }
 
-        if (AttributesValidator::isNotEmptyString($post['image_url'])) {
+        if ($post['image_url'] !== null && AttributesValidator::isNotEmptyString($post['image_url'])) {
             if (AttributesValidator::isOverMaxlen($post['image_url'], 500)) {
                 return [
                     'code' => 100,
@@ -64,7 +64,7 @@ class SimpleValidator
             }
         }
 
-        if (AttributesValidator::isNotEmptyString($post['ad_url'])) {
+        if ($post['ad_url'] !== null && AttributesValidator::isNotEmptyString($post['ad_url'])) {
             if (AttributesValidator::isOverMaxlen($post['ad_url'], 500)) {
                 return [
                     'code' => 100,
@@ -97,7 +97,7 @@ class SimpleValidator
                 ];
             }
 
-            if (AttributesValidator::isOverMaxlen($post['ad_url'], 500)) {
+            if (AttributesValidator::isOverMaxlen($post['own_player_url'], 500)) {
                 return [
                     'code' => 100,
                     'message' => 'Ссылка на плеер не может быть длинее 500 символов.',
@@ -107,7 +107,7 @@ class SimpleValidator
                 ];
             }
 
-            if (!AttributesValidator::isValidURL($post['ad_url'])) {
+            if (!AttributesValidator::isValidURL($post['own_player_url'])) {
                 return [
                     'code' => 100,
                     'message' => 'Некорректная ссылка на свой плеер.',
@@ -147,7 +147,7 @@ class SimpleValidator
                 ]
             ];
         }
-        
+
         return [
             'code' => 200
         ];
