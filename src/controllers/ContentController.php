@@ -290,7 +290,7 @@ class ContentController extends BaseController
 
                     // new request not include `in main`
                     // but db exist content mark as `in main`
-                    if ((int) $contentAttributes['in_main'] === 0 && (int) $content->in_main === 1) {
+                    if ((int) $contentAttributes['in_main'] === 0) {
 
                         // delete from home page
                         Playlist::deleteAll([
@@ -298,19 +298,19 @@ class ContentController extends BaseController
                             'user_id' => $user->getId()
                         ]);
 
-                    } elseif ((int) $contentAttributes['in_main'] === 1 && (int) $content->in_main === 0) {
+                    } elseif ((int) $contentAttributes['in_main'] === 1) {
 
                         // if request contain `in main` but db `in main` flag is false
                         // add in home page
                         // check exist & update/create
-                        $playlist = Playlist::find()
-                            ->where(['and', ['user_id' => $user->getId(), 'content_id' => $content->id]])
-                            ->one();
+//                        $playlist = Playlist::find()
+//                            ->where(['and', ['user_id' => $user->getId(), 'content_id' => $content->id]])
+//                            ->one();
 
                         // related record may not exist, its bad practics
-                        if (!$playlist) {
+                        //if (!$playlist) {
                             $playlist = new Playlist();
-                        }
+                        //}
 
                         if (ContentService::savePlaylistAfterContent($playlist, $content, $user) !== false) {
                             $withPlaylist = true;
