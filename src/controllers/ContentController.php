@@ -150,7 +150,7 @@ class ContentController extends BaseController
             return $this->response($validate);
         }
 
-        if ($contentAttributes['in_main']) {
+        if ((int) $contentAttributes['in_main'] === 1) {
             if ($user->is_official !== 1) {
                 return $this->response([
                     'code' => 100,
