@@ -146,7 +146,7 @@ class UserController extends BaseController
 
         return $this->response([
             'code' => 200,
-            'message' => '',
+            'message' => 'Хорошо! Очень хорошо, мы расмотрим Ваше предложение и в скором времени свяжемся с Вами!',
             '__attributes' => $attributes
         ]);
     }
