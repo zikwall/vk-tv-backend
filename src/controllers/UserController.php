@@ -7,9 +7,12 @@ use Yii;
 use yii\db\Expression;
 use yii\db\Query;
 use zikwall\vktv\constants\Content;
+use zikwall\vktv\RequestTrait;
 
 class UserController extends BaseController
 {
+    use RequestTrait;
+
     public function actionList()
     {
         $users = (new Query())
@@ -130,6 +133,21 @@ class UserController extends BaseController
         return $this->response([
             'code' => 200,
             'response' => $sinitizeItems
+        ]);
+    }
+
+    public function actionIWant()
+    {
+        if (Yii::$app->request->getIsOptions()) {
+            return true;
+        }
+
+        $attributes = $this->getJSONBody();
+
+        return $this->response([
+            'code' => 200,
+            'message' => '',
+            '__attributes' => $attributes
         ]);
     }
 }
