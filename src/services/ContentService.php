@@ -34,6 +34,7 @@ class ContentService
         $content->default_player        = $contentAttributes['default_player'];
         $content->blocked               = !$content->isNewRecord ? 0 : $content->blocked;
         $content->rating                = !$content->isNewRecord ? 0 : $content->rating;
+        $content->in_main               = (int) $contentAttributes['in_main'];
 
         if (!$content->save()) {
             return false;
