@@ -284,22 +284,30 @@ class ContentController extends BaseController
 
             $withPlaylist = false;
             if (ContentService::saveWithActiveRecord($content, $contentAttributes, $user) !== false) {
-                /**
-                 * Update related playlist
-                 */
-                if ((int) $content->in_main === 1 && (int) $user->is_official === 1) {
-                    if ((int) $contentAttributes['in_main'] === 0) {
-                        // if off
+
+                // Update related playlist only official users
+                if ((int) $user->is_official === 1) {
+
+                    // new request not include `in main`
+                    // but db exist content mark as `in main`
+                    if ((int) $contentAttributes['in_main'] === 0 && (int) $content->in_main === 1) {
+
+                        // delete from home page
                         Playlist::deleteAll([
                             'content_id' => $content->id,
                             'user_id' => $user->getId()
                         ]);
-                    } else {
+
+                    } elseif ((int) $contentAttributes['in_main'] === 1 && (int) $content->in_main === 0) {
+
+                        // if request contain `in main` but db `in main` flag is false
+                        // add in home page
                         // check exist & update/create
                         $playlist = Playlist::find()
                             ->where(['and', ['user_id' => $user->getId(), 'content_id' => $content->id]])
                             ->one();
 
+                        // related record may not exist, its bad practics
                         if (!$playlist) {
                             $playlist = new Playlist();
                         }
