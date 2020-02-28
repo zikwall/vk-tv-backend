@@ -73,7 +73,8 @@ class Profile extends ActiveRecord
                 }
             }
 
-            $savedFile = Image::base64ToJPEG($avatar, Yii::getAlias('@app') . '/web/user/avatars');
+            $avatarFilePath = Yii::getAlias('@app') . '/web/user/avatars';
+            $savedFile = Image::base64ToJPEG($avatar, $avatarFilePath, true);
             $this->avatar = sprintf('http://tv.zikwall.ru/web/user/avatars/%s.jpg', $savedFile);
         }
 
