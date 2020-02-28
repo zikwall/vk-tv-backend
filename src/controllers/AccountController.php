@@ -24,6 +24,7 @@ class AccountController extends BaseController
         $post  = json_decode(Yii::$app->getRequest()->getRawBody(), true);
         $name       = $post['name'];
         $publiEmail = $post['publicEmail'];
+        $avatar     = $post['avatar'];
 
         if (!empty($publiEmail)) {
             if (!AttributesValidator::isValidEmail($publiEmail)) {
@@ -42,14 +43,6 @@ class AccountController extends BaseController
          */
         $profile = $this->getUser()->profile;
 
-        if ($name) {
-            $profile->name = $name;
-        }
-
-        if ($publiEmail) {
-            $profile->public_email = $publiEmail;
-        }
-
         if (!$profile->validate()) {
             return $this->response(array_merge(Auth::ERROR_NOT_VALID_DATA, [
                 'attributes' => [
@@ -59,9 +52,8 @@ class AccountController extends BaseController
             ]), 200);
         }
 
-
         // TODO check full equal attributes
-        if (!$profile->save()) {
+        if (!$profile->updateProfile($name, $publiEmail, $avatar)) {
             return $this->response([Auth::ERROR_NOT_SAVED_DATA, 'errors' => $profile->getErrors()], 200);
         }
 
@@ -76,9 +68,9 @@ class AccountController extends BaseController
                 'user' => [
                     'id' => $this->getUser()->id,
                     'profile' => [
-                        'name' => $this->getUser()->profile->name,
-                        'public_email' => $this->getUser()->profile->public_email,
-                        'avatar' => $this->getUser()->profile->avatar
+                        'name' => $profile->name,
+                        'public_email' => $profile->public_email,
+                        'avatar' => $profile->avatar
                     ]
                 ]
             ]

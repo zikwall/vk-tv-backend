@@ -3,6 +3,8 @@
 
 namespace vktv\models;
 
+use Yii;
+use zikwall\vktv\helpers\Image;
 use yii\db\ActiveRecord;
 
 class Profile extends ActiveRecord
@@ -43,5 +45,51 @@ class Profile extends ActiveRecord
             'website'        => \Yii::t('user', 'Website'),
             'bio'            => \Yii::t('user', 'Bio'),
         ];
+    }
+
+    public function updateProfile($name, $email, $avatar)
+    {
+        $userUploadDir = Yii::getAlias('@app') . '/web/user/avatars/';
+        $savedFile = '';
+
+        if ($name) {
+            $this->name = $name;
+        }
+
+        if ($email) {
+            $this->public_email = $email;
+        }
+
+        if ($avatar) {
+            if (!empty($this->avatar)) {
+                $avatarSplits = explode('/', $avatar);
+                $dbAvatar = $avatarSplits[6];
+
+                if (!empty($dbAvatar)) {
+                    $file = $userUploadDir . $dbAvatar;
+
+                    if (file_exists($file)) {
+                        unlink($file);
+                    }
+                }
+            }
+
+            $savedFile = Image::base64ToJPEG($avatar, Yii::getAlias('@app') . '/web/user/avatars');
+            $this->avatar = sprintf('http://tv.zikwall.ru/web/user/avatars/%s.jpg', $savedFile);
+        }
+
+        if (!$this->save()) {
+            if (!empty($savedFile)) {
+                $file = $userUploadDir . $savedFile . '.jpg';
+
+                if (file_exists($file)) {
+                    unlink($file);
+                }
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }
