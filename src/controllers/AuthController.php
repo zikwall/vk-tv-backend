@@ -28,8 +28,10 @@ class AuthController extends BaseController
         $post  = json_decode(Yii::$app->getRequest()->getRawBody(), true);
         $name       = $post['name'];
         $publiEmail = $post['publicEmail'];
-        //$avatar     = $post['photo'];
+        $avatar     = $post['photo'];
         //$token      = $post['token'];
+
+        file_put_contents(Yii::getAlias('@app/runtime') . '/test_photo.log', print_r([$post, $_POST], true));
 
         if ($this->isUnauthtorized()) {
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
