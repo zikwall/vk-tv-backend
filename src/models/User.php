@@ -365,7 +365,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         if (!empty($avatar)) {
-            $profile->avatar = sprintf('/web/user/avatars/%s.jpg', $avatar);
+            $profile->avatar = sprintf('http://tv.zikwall.ru/web/user/avatars/%s.jpg', $avatar);
         }
 
         if (!$profile->save()) {

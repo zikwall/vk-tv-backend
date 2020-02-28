@@ -270,7 +270,7 @@ class AuthController extends BaseController
             'profile' => [
                 'name' => $user->profile->name,
                 'public_email' => $user->profile->public_email,
-                'avatar' => 'http://tv.zikwall.ru' . $user->profile->avatar
+                'avatar' => $user->profile->avatar
             ],
             'friends' => Friendship::getFriendsQuery($user)->asArray()->all()
         ];
