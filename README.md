@@ -60,3 +60,4 @@
 
 1. Scan and load playlists into the database, run: `php yii vktv/generate`
 2. Scan and add TV programs to the database from XMLTV, run: `php yii vktv/generate/epg-xmltv`
+3. Run Calculate content ratings: `php7.3 yii vktv/recount-rating/calculate`
