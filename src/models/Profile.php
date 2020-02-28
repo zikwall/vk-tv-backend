@@ -62,12 +62,11 @@ class Profile extends ActiveRecord
 
         if ($avatar) {
             if (!empty($this->avatar)) {
-                $avatarSplits = explode('/', $avatar);
+                $avatarSplits = explode('/', $this->avatar);
                 $dbAvatar = $avatarSplits[6];
 
                 if (!empty($dbAvatar)) {
                     $file = $userUploadDir . $dbAvatar;
-
                     if (file_exists($file)) {
                         unlink($file);
                     }
