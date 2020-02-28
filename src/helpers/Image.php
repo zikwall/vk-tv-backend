@@ -6,7 +6,8 @@ class Image
 {
     public static function base64ToJPEG( $base64String, $directory )
     {
-        $filePath = sprintf('%s/%s.jpg', $directory, UUID::v4());
+        $filename = UUID::v4();
+        $filePath = sprintf('%s/%s.jpg', $directory, $filename);
 
         // open the output file for writing
         $ifp = fopen( $filePath, 'wb' );
@@ -22,6 +23,6 @@ class Image
         // clean up the file resource
         fclose( $ifp );
 
-        return $filePath;
+        return $filename;
     }
 }
