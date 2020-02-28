@@ -341,7 +341,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->confirmed_at !== null;
     }
 
-    public function afterRegistrationHandle($name, $publicEmail)
+    public function afterRegistrationHandle($name, $publicEmail, $avatar)
     {
         if (empty($name) && empty($publicEmail)) {
             return false;
@@ -362,6 +362,10 @@ class User extends ActiveRecord implements IdentityInterface
         
         if (!empty($publicEmail)) {
             $profile->public_email = $publicEmail;
+        }
+
+        if (!empty($avatar)) {
+            $profile->avatar = $avatar;
         }
 
         if (!$profile->save()) {

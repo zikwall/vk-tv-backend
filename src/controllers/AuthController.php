@@ -32,9 +32,7 @@ class AuthController extends BaseController
         $avatar     = $post['avatar'];
         //$token      = $post['token'];
 
-        file_put_contents(Yii::getAlias('@app/runtime') . '/test_photo.log', print_r([$post, $_POST], true));
-
-        Image::base64ToJPEG($avatar, Yii::getAlias('@app/runtime') . '/tmp.jpg');
+        $savedFileName = Image::base64ToJPEG($avatar, Yii::getAlias('@web') . '/user/avatars/');
 
         if ($this->isUnauthtorized()) {
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
@@ -56,7 +54,7 @@ class AuthController extends BaseController
             }
         }
 
-        if (!$this->getUser()->afterRegistrationHandle($name, $publiEmail)) {
+        if (!$this->getUser()->afterRegistrationHandle($name, $publiEmail, $savedFileName)) {
             return $this->response(Auth::MESSAGE_USER_AFTER_REGISTRATION_FAILED, 200);
         }
 
