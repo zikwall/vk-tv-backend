@@ -32,7 +32,10 @@ class AuthController extends BaseController
         $avatar     = $post['avatar'];
         //$token      = $post['token'];
 
-        $savedFileName = Image::base64ToJPEG($avatar, Yii::getAlias('@app') . '/web/user/avatars');
+        $savedFileName = null;
+        if (!empty($avatar)) {
+            $savedFileName = Image::base64ToJPEG($avatar, Yii::getAlias('@app') . '/web/user/avatars');
+        }
 
         if ($this->isUnauthtorized()) {
             return $this->response(Auth::MESSAGE_IS_UNAUTHORIZED, 200);
