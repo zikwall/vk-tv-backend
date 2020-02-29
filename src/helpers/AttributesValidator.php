@@ -56,7 +56,7 @@ class AttributesValidator
             return false;
         }
 
-        return preg_match('/^[a-zA-Z]+(([\',. -][a-zA-Z ])?[a-zA-Z]*)*$/', $name);
+        return preg_match('/^[a-zA-Zа-яА-Я]+(([\',. -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/', $name);
     }
 
     public static function isValidURL($str)
@@ -68,17 +68,17 @@ class AttributesValidator
             '(\\?[;&a-z\\d%_.~+=-]*)?' .// query string
             '(\\#[-a-z\\d_]*)?$/i', $str);
     }
-    
+
     public static function isOverMaxlen(string $attribute, int $maxLen) : bool
     {
         return strlen($attribute) > $maxLen;
     }
-    
-    public static function isNotEmptyString(string $attribute) : bool 
+
+    public static function isNotEmptyString(string $attribute) : bool
     {
         return strlen($attribute) > 0;
     }
-    
+
     public static function isSSL(string $url) : bool
     {
         return strpos($url, "https://") !== false;
