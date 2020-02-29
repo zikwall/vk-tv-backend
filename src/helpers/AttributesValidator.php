@@ -56,7 +56,7 @@ class AttributesValidator
             return false;
         }
 
-        return preg_match('/^[a-zA-Zа-яА-Я]+(([\',. -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/', $name);
+        return preg_match('/^[a-zA-Zа-яА-Я]+(([\',. -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/u', $name);
     }
 
     public static function isValidURL($str)
