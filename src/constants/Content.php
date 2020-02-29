@@ -10,10 +10,12 @@ class Content
     const VISIBILITY_PRIVATE = 20;
     const VISIBILITY_OWNER = 30;
     const VISIBILITY_PREMIUM = 40;
+    const VISIBILITY_USERS = 50;
+    const VISIBILITY_FRIENDS = 60;
 
     const TYPE_CHANNEL = 10;
     const TYPE_FILM = 20;
-    
+
     const CONTENT_PINNED = 1;
     const CONTENT_NOTPINNED = 0;
     const CONTENT_ARCHIVED = 1;
