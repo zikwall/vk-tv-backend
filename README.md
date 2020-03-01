@@ -52,6 +52,30 @@
 
 ```
 
+#### Mail
+
+```php
+'components' => [
+    'mailer' => [
+                'class' => 'yii\swiftmailer\Mailer',
+                // send all mails to a file by default. You have to set
+                // 'useFileTransport' to false and configure a transport
+                // for the mailer to send real emails.
+                'useFileTransport' => false,
+                'enableSwiftMailerLogging' => true,
+                'transport' => [
+                    'class' => 'Swift_SmtpTransport',
+    	            'host' => 'smtp.mail.ru',
+    	            'username' => '*******.*********@mail.ru',
+    	            'password' => '*************************',
+    	            'port' => '465',
+    	            'encryption' => 'ssl',
+                ],
+    ],
+    //... other components
+]
+```
+
 #### Migrations
 
 `php yii migrate --migrationPath=@vktv/migrations`

@@ -11,7 +11,7 @@ class Mailer
     use ModuleTrait;
 
     public $viewPath = '@vktv/views/mail';
-    public $sender = ['community.playhub@gmail.com' => 'PlayHub'];
+    public $sender = ['community.playhub@mail.ru' => 'PlayHub'];
     public $mailerComponent;
     protected $welcomeSubject;
     protected $newPasswordSubject;
