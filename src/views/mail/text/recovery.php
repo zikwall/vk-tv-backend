@@ -1,18 +1,17 @@
 <?php
 
-
 /**
  * @var \vktv\models\User   $user
- * @var dektrium\user\models\Token  $token
+ * @var \zikwall\vktv\models\Token  $token
  */
 ?>
-<?= Yii::t('user', 'Hello') ?>,
+<?= 'Hello' ?>,
 
-<?= Yii::t('user', 'We have received a request to reset the password for your account on {0}', Yii::$app->name) ?>.
-<?= Yii::t('user', 'Please click the link below to complete your password reset') ?>.
+<?= 'We have received a request to reset the password for your account on PlayHub' ?>.
+<?= 'Please click the link below to complete your password reset' ?>.
 
 <?= $token->url ?>
 
-<?= Yii::t('user', 'If you cannot click the link, please try pasting the text into your browser') ?>.
+<?= 'If you cannot click the link, please try pasting the text into your browser' ?>.
 
-<?= Yii::t('user', 'If you did not make this request you can ignore this email') ?>.
+<?= 'If you did not make this request you can ignore this email' ?>.

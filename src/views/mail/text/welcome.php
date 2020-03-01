@@ -1,23 +1,25 @@
 <?php
 
 /**
- * @var \vktv\models\User
+ * @var $user \vktv\models\User
+ * @var $token \zikwall\vktv\models\Token
+ * @var $module \zikwall\vktv\Module
  */
 ?>
-<?= Yii::t('user', 'Hello') ?>,
+<?= 'Hello' ?>,
 
-<?= Yii::t('user', 'Your account on {0} has been created', Yii::$app->name) ?>.
+<?= "Your account on {" . Yii::$app->name . "} has been created" ?>.
 <?php if ($module->enableGeneratingPassword): ?>
-    <?= Yii::t('user', 'We have generated a password for you') ?>:
+    <?= 'We have generated a password for you' ?>:
     <?= $user->password ?>
 <?php endif ?>
 
 <?php if ($token !== null): ?>
-    <?= Yii::t('user', 'In order to complete your registration, please click the link below') ?>.
+    <?= 'In order to complete your registration, please click the link below' ?>.
 
     <?= $token->url ?>
 
-    <?= Yii::t('user', 'If you cannot click the link, please try pasting the text into your browser') ?>.
+    <?= 'If you cannot click the link, please try pasting the text into your browser' ?>.
 <?php endif ?>
 
-<?= Yii::t('user', 'If you did not make this request you can ignore this email') ?>.
+<?= 'If you did not make this request you can ignore this email' ?>.

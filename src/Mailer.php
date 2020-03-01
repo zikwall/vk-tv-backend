@@ -22,7 +22,7 @@ class Mailer
     public function getWelcomeSubject()
     {
         if ($this->welcomeSubject == null) {
-            $this->setWelcomeSubject(Yii::t('user', 'Welcome to {0}', Yii::$app->name));
+            $this->setWelcomeSubject('Welcome to PlayHub!');
         }
 
         return $this->welcomeSubject;
@@ -36,7 +36,7 @@ class Mailer
     public function getNewPasswordSubject()
     {
         if ($this->newPasswordSubject == null) {
-            $this->setNewPasswordSubject(Yii::t('user', 'Your password on {0} has been changed', Yii::$app->name));
+            $this->setNewPasswordSubject('Your password on PlayHub has been changed');
         }
 
         return $this->newPasswordSubject;
@@ -50,7 +50,7 @@ class Mailer
     public function getRecoverySubject()
     {
         if ($this->recoverySubject == null) {
-            $this->setRecoverySubject(Yii::t('user', 'Complete password reset on {0}', Yii::$app->name));
+            $this->setRecoverySubject('Complete password reset on PlayHub');
         }
 
         return $this->recoverySubject;
