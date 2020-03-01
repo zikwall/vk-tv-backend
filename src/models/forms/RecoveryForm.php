@@ -3,6 +3,7 @@
 namespace zikwall\vktv\models\forms;
 
 use vktv\models\User;
+use zikwall\vktv\constants\Auth;
 use zikwall\vktv\models\Token;
 use zikwall\vktv\ModuleTrait;
 use yii\base\Model;
@@ -58,6 +59,7 @@ class RecoveryForm extends Model
             'emailPattern' => ['email', 'email'],
             'passwordRequired' => ['password', 'required'],
             'passwordLength' => ['password', 'string', 'max' => 72, 'min' => 6],
+            ['password', 'match', 'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/', 'message' => Auth::ERROR_INVALID_PASSWORD['message']],
         ];
     }
 
