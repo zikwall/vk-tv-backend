@@ -108,6 +108,8 @@ class RecoveryForm extends Model
         }
 
         if ($token->user->resetPassword($this->password)) {
+            $token->delete();
+
             return true;
         } else {
             return false;

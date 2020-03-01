@@ -3,9 +3,11 @@
 /**
  * @var yii\web\View $this
  * @var \zikwall\vktv\Module $module
+ * @var $message string
+ * @var $title string
  */
 
 $this->title = $title;
 ?>
 
-<?= $this->render('/_alert', ['module' => $module]);
+<?= $message ?>
