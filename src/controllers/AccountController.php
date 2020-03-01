@@ -2,6 +2,7 @@
 
 namespace zikwall\vktv\controllers;
 
+use vktv\models\Friendship;
 use vktv\models\User;
 use Yii;
 use vktv\models\Profile;
@@ -61,17 +62,24 @@ class AccountController extends BaseController
             $this->getUser()->confirm();
         }
 
+        $user = $this->getUser();
+
         return $this->response([
             'code' => 200,
             'response' => [
-                'message' => 'Successfully!',
+                'message' => 'Вы успешно обновили данные!',
                 'user' => [
-                    'id' => $this->getUser()->id,
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'is_premium' => $user->is_premium && $user->premium_ttl > time(),
+                    'is_official' => $user->is_official,
                     'profile' => [
                         'name' => $profile->name,
                         'public_email' => $profile->public_email,
                         'avatar' => $profile->avatar
-                    ]
+                    ],
+                    'friends' => Friendship::getFriendsQuery($user)->asArray()->all()
                 ]
             ]
         ], 200);
@@ -129,7 +137,7 @@ class AccountController extends BaseController
                 ]
             ]);
         }
-        
+
         if ($new_pass !== $new_pass_check) {
             return $this->response([
                 'code' => 100,
