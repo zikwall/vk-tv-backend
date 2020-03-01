@@ -13,8 +13,11 @@ use Firebase\JWT\JWT;
 use yii\web\Response;
 use yii\web\IdentityInterface;
 use zikwall\vktv\helpers\Image;
+use zikwall\vktv\models\forms\RecoveryForm;
+use zikwall\vktv\models\Token;
 use zikwall\vktv\ModuleTrait;
 use zikwall\vktv\constants\Auth;
+use yii\web\NotFoundHttpException;
 
 class AuthController extends BaseController
 {
@@ -70,6 +73,47 @@ class AuthController extends BaseController
         ], 200);
     }
 
+    public function actionReset($id, $code)
+    {
+        $token = Token::find()
+            ->where(['user_id' => $id, 'code' => $code, 'type' => Token::TYPE_RECOVERY])
+            ->one();
+
+        if (empty($token) || ! $token instanceof Token) {
+            throw new NotFoundHttpException();
+        }
+
+        if ($token === null || $token->isExpired || $token->user === null) {
+            \Yii::$app->session->setFlash(
+                'danger',
+                \Yii::t('user', 'Recovery link is invalid or expired. Please try requesting a new one.')
+            );
+            return $this->render('/message', [
+                'title'  => \Yii::t('user', 'Invalid or expired link'),
+                'module' => $this->getModule(),
+            ]);
+        }
+
+        /** @var RecoveryForm $model */
+        $model = \Yii::createObject([
+            'class'    => RecoveryForm::class,
+            'scenario' => RecoveryForm::SCENARIO_RESET,
+        ]);
+
+        $this->performAjaxValidation($model);
+
+        if ($model->load(\Yii::$app->getRequest()->post()) && $model->resetPassword($token)) {
+            return $this->render('/message', [
+                'title'  => \Yii::t('user', 'Password has been changed'),
+                'module' => $this->getModule(),
+            ]);
+        }
+
+        return $this->render('reset', [
+            'model' => $model,
+        ]);
+    }
+
     public function actionForgot()
     {
         if (Yii::$app->request->getIsOptions()) {
@@ -81,17 +125,27 @@ class AuthController extends BaseController
 
 
         if (!AttributesValidator::isValidEmail($email)) {
-            return $this->response(Auth::ERROR_INVALID_EMAIL_ADRESS, 200);
+            return $this->response(Auth::ERROR_INVALID_EMAIL_ADRESS);
         }
 
         if (!User::findByEmail($email)) {
-            return $this->response(Auth::ERROR_EMAIL_NOT_FOUND, 200);
+            return $this->response(Auth::ERROR_EMAIL_NOT_FOUND);
+        }
+
+        $recovery = new RecoveryForm();
+        $recovery->email = $email;
+
+        if ($recovery->sendRecoveryMessage()) {
+            return $this->response([
+                'code' => 200,
+                'response' => Auth::MESSAGE_SUCCESSUL_SEND_FORGOT_MESSAGE
+            ]);
         }
 
         return $this->response([
-            'code' => 200,
-            'response' => Auth::MESSAGE_SUCCESSUL_SEND_FORGOT_MESSAGE
-        ], 200);
+            'code' => 100,
+            'message' => 'Не удалось отправить сообщение для востановления пароля(('
+        ]);
     }
 
     public function actionSignin()

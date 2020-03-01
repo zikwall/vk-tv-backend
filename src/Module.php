@@ -20,6 +20,17 @@ class Module extends \yii\base\Module
     // user
     public $cost = 10;
 
+    /** @var int The time before a confirmation token becomes invalid. */
+    public $confirmWithin = 86400; // 24 hours
+
+    /** @var int The time before a recovery token becomes invalid. */
+    public $recoverWithin = 21600; // 6 hours
+
+    /**
+     * @var Mailer
+     */
+    public $mailer = null;
+
     public function init()
     {
         parent::init();
@@ -27,5 +38,12 @@ class Module extends \yii\base\Module
         if (Yii::$app instanceof \yii\console\Application) {
             $this->controllerNamespace = 'zikwall\vktv\commands';
         }
+
+        $this->mailer = new Mailer();
+    }
+
+    public function getMailer() : Mailer
+    {
+        return $this->mailer;
     }
 }

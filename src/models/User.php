@@ -13,6 +13,7 @@ use yii\web\IdentityInterface;
 use yii\helpers\ArrayHelper;
 use vktv\helpers\Password;
 use vktv\models\query\UserFind;
+use zikwall\vktv\models\Token;
 use zikwall\vktv\ModuleTrait;
 
 /**
@@ -70,7 +71,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @var string Default username regexp
      */
     public static $usernameRegexp = '/^[-a-zA-Z0-9_\.@]+$/';
-    
+
     /**
      * @return UserFind|\yii\db\ActiveQuery
      */
@@ -161,42 +162,42 @@ class User extends ActiveRecord implements IdentityInterface
     {
         // TODO: Implement findIdentityByAccessToken() method.
     }
-    
+
     public static function findByEmail($email)
     {
         return static::findOne(['email' => $email]);
     }
-    
+
     public static function findByUsername($username)
     {
         return static::findOne(['username' => $username]);
     }
-    
+
     public static function findByEmailOrUsername($email, $username)
     {
         return static::findOne(['email' => $email, 'username' => $username]);
     }
-    
+
     public function validateAuthKey($authKey)
     {
         return $this->getAttribute('auth_key') === $authKey;
     }
-    
+
     public function isBlocked() : bool
     {
         return $this->blocked_at !== null;
     }
-    
+
     public function isDestroyed() : bool
     {
         return $this->is_destroy === 1 && $this->destroyed_at !== null;
     }
-    
+
     public function getProfile()
     {
         return $this->hasOne(Profile::class, ['user_id' => 'id']);
     }
-    
+
     public function setProfile(Profile $profile)
     {
         $this->_profile = $profile;
@@ -211,7 +212,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->getAttribute('auth_key');
     }
-    
+
     public function create() : bool
     {
         if ($this->getIsNewRecord() == false) {
@@ -232,47 +233,56 @@ class User extends ActiveRecord implements IdentityInterface
         $this->trigger(self::AFTER_CREATE);
         return true;
     }
-    
+
     public function register() : bool
     {
         if ($this->getIsNewRecord() == false) {
             throw new \RuntimeException('Calling "' . __CLASS__ . '::' . __METHOD__ . '" on existing user');
         }
 
-        $this->confirmed_at = null;
-        $this->password     = $this->getModule()->enableGeneratingPassword ? Password::generate(8) : $this->password;
+        $transaction = $this->getDb()->beginTransaction();
 
-        $ip = Yii::$app->request->getUserIP();
+        try {
+            $this->confirmed_at = null;
+            $this->password     = $this->getModule()->enableGeneratingPassword ? Password::generate(8) : $this->password;
 
-        if ($ip !== null) {
-            $this->registration_ip = $ip;
+            $ip = Yii::$app->request->getUserIP();
+
+            if ($ip !== null) {
+                $this->registration_ip = $ip;
+            }
+
+            $this->trigger(self::BEFORE_REGISTER);
+
+            if (!$this->save()) {
+                return false;
+            }
+
+            if ($this->getModule()->enableConfirmation) {
+                //$token = Yii::createObject(['class' => Token::class, 'type' => Token::TYPE_CONFIRMATION]);
+                //$token->link('user', $this);
+                //$this->>confirm();
+            }
+
+            $this->getModule()->getMailer()->sendWelcomeMessage($this, isset($token) ? $token : null);
+
+            $this->trigger(self::AFTER_REGISTER);
+
+            $transaction->commit();
+
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            \Yii::warning($e->getMessage());
+            throw $e;
         }
-
-        $this->trigger(self::BEFORE_REGISTER);
-
-        if (!$this->save()) {
-            return false;
-        }
-
-        if ($this->getModule()->enableConfirmation) {
-            // confirm
-        }
-
-        //if(!InviteCode::invite($this)) {
-        // invite
-        //}
-
-        // sendWelcomeMessage($this, $token);
-
-        $this->trigger(self::AFTER_REGISTER);
-        return true;
     }
-    
+
     public function confirm() : bool
     {
         return (bool)$this->updateAttributes(['confirmed_at' => time()]);
     }
-    
+
     public function resetPassword($password) : bool
     {
         return (bool)$this->updateAttributes(['password_hash' => Password::hash($password)]);
@@ -323,19 +333,19 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->is_premium = 1;
         $this->premium_ttl = $premium['expired'];
-        
+
         if ($this->save()) {
             Yii::$app->db->createCommand()->insert('{{%user_premium}}', [
                 'user_id' => $this->getId(),
                 'key_id' => $premium['id']
             ])->execute();
-            
+
             return true;
         }
-        
+
         return false;
     }
-    
+
     public function isAlreadyConfirmed() : bool
     {
         return $this->confirmed_at !== null;
@@ -359,7 +369,7 @@ class User extends ActiveRecord implements IdentityInterface
         if (!empty($name)) {
             $profile->name = $name;
         }
-        
+
         if (!empty($publicEmail)) {
             $profile->public_email = $publicEmail;
         }
@@ -374,7 +384,7 @@ class User extends ActiveRecord implements IdentityInterface
 
         return $this->confirm();
     }
-    
+
     public function generateUsername()
     {
         // try to use name part of email
@@ -401,11 +411,11 @@ class User extends ActiveRecord implements IdentityInterface
                 $this->setAttribute('registration_ip', Yii::$app->request->userIP);
             }
         }
-        
+
         if (!empty($this->password)) {
             $this->setAttribute('password_hash', Password::hash($this->password));
         }
-        
+
         return parent::beforeSave($insert);
     }
 
