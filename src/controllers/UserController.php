@@ -13,7 +13,7 @@ class UserController extends BaseController
 {
     use RequestTrait;
 
-    public function actionList()
+    public function actionList(int $offset = 0, int $paginationSize = 20)
     {
         $users = (new Query())
             ->select([
@@ -29,11 +29,21 @@ class UserController extends BaseController
                 [
                     'is', '{{%user}}.blocked_at', new Expression('NULL')
                 ]
-            ])->all();
+            ]);
+
+        $cloneQuery = clone $users;
+        $count = $cloneQuery->count();
+        $countPages = (int) ceil($count/$paginationSize);
+
+        $users->offset($offset * $paginationSize)->limit($paginationSize);
 
         return $this->response([
             'code' => 200,
-            'response' => $users
+            'response' => [
+                'users' => $users->all(),
+                'count_pages' => $countPages,
+                'end' => $countPages === $offset + 1
+            ]
         ]);
     }
 
