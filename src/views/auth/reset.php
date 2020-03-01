@@ -104,9 +104,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                     <?php ActiveForm::end(); ?>
                 </div>
-                <div class="login_fast_restore_wrap _retore_wrap">
-                    <a class="login_link login_fast_restore_link" href="#">Забыли пароль или не можете войти?</a>
-                </div>
             </div>
         </div>
     </div>
