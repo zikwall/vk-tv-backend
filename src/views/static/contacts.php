@@ -1,5 +1,4 @@
-<h2>Контакты</h2>
-По всем вопросам пишите: admin.playhub@gmail.com
+По всем вопросам пишите: community.playhub@gmail.com
 <br>
 Контактное лицо: Андрей
 
