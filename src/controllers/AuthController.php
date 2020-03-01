@@ -86,10 +86,10 @@ class AuthController extends BaseController
         if ($token === null || $token->isExpired || $token->user === null) {
             \Yii::$app->session->setFlash(
                 'danger',
-                \Yii::t('user', 'Recovery link is invalid or expired. Please try requesting a new one.')
+                'Recovery link is invalid or expired. Please try requesting a new one.'
             );
             return $this->render('/message', [
-                'title'  => \Yii::t('user', 'Invalid or expired link'),
+                'title'  => 'Invalid or expired link',
                 'module' => $this->getModule(),
             ]);
         }
@@ -104,7 +104,7 @@ class AuthController extends BaseController
 
         if ($model->load(\Yii::$app->getRequest()->post()) && $model->resetPassword($token)) {
             return $this->render('/message', [
-                'title'  => \Yii::t('user', 'Password has been changed'),
+                'title'  => 'Password has been changed',
                 'module' => $this->getModule(),
             ]);
         }

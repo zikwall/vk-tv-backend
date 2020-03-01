@@ -31,8 +31,8 @@ class RecoveryForm extends Model
     public function attributeLabels()
     {
         return [
-            'email'    => \Yii::t('user', 'Email'),
-            'password' => \Yii::t('user', 'Password'),
+            'email'    => 'Email',
+            'password' => 'Password',
         ];
     }
 
