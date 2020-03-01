@@ -17,10 +17,10 @@ class m200301_092714_add_token_table extends Migration
             'code'       => $this->string(32)->notNull(),
             'created_at' => $this->integer()->notNull(),
             'type'       => $this->smallInteger()->notNull(),
-        ], $this->tableOptions);
+        ]);
 
         $this->createIndex('{{%token_unique}}', '{{%token}}', ['user_id', 'code', 'type'], true);
-        $this->addForeignKey('{{%fk_user_token}}', '{{%token}}', 'user_id', '{{%user}}', 'id', $this->cascade, $this->restrict);
+        $this->addForeignKey('{{%fk_user_token}}', '{{%token}}', 'user_id', '{{%user}}', 'id', 'CASCADE', 'RESTRICT');
     }
 
     /**
