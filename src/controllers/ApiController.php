@@ -25,10 +25,11 @@ class ApiController extends BaseController
                           IF(@last_category_id=category, @I:=@I+1, @I:=1)N,
                     /*присваеваем ид категории в переменную*/
                           @last_category_id := category
-                    FROM content WHERE active=1 AND blocked=0 AND visibility!=20,
+                    FROM content,
                     /*инициализируем локальные переменные*/
                         (SELECT @last_category_id := null, @I := 0)T
-                        /*сортируем по категории, затем рейтингу по убыванию*/
+                    WHERE active=1 AND blocked=0 AND visibility!=20
+                    /*сортируем по категории, затем рейтингу по убыванию*/
                     ORDER BY category, rating, votes DESC
               )T
               /*выводим по 10 строк из каждой секции*/
