@@ -31,7 +31,7 @@ class SimpleValidator
         }
 
         if (AttributesValidator::isNotEmptyString($post['url'])) {
-            if (!preg_match('/([a-zA-Z0-9\s_\\.\-\(\):])+(.m3u|.m3u8)$/i', $post['url']) || !AttributesValidator::isValidURL($post['url'])) {
+            if (!preg_match('/([a-zA-Z0-9\s_\\.\-\(\):])+(.m3u|.m3u8|.mp4|.avi)$/i', $post['url']) || !AttributesValidator::isValidURL($post['url'])) {
                 return [
                     'code' => 100,
                     'message' => 'Некорректная ссылка на вещание.',
