@@ -12,6 +12,7 @@ use vktv\models\forms\LoginForm;
 use Firebase\JWT\JWT;
 use yii\web\Response;
 use yii\web\IdentityInterface;
+use zikwall\vktv\AjaxValidationTrait;
 use zikwall\vktv\helpers\Image;
 use zikwall\vktv\models\forms\RecoveryForm;
 use zikwall\vktv\models\Token;
@@ -22,6 +23,7 @@ use yii\web\NotFoundHttpException;
 class AuthController extends BaseController
 {
     use ModuleTrait;
+    use AjaxValidationTrait;
 
     public function actionContinueSignup()
     {
