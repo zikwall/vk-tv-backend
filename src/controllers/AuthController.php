@@ -134,6 +134,7 @@ class AuthController extends BaseController
 
         $recovery = new RecoveryForm();
         $recovery->email = $email;
+        $recovery->scenarios = RecoveryForm::SCENARIO_REQUEST;
 
         if ($recovery->sendRecoveryMessage()) {
             return $this->response([
