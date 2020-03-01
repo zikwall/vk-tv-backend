@@ -16,7 +16,7 @@ class Module extends \yii\base\Module
     public $enableConfirmation = false;
     public $enableGeneratingPassword = false;
     public $enableUnconfirmedLogin = false;
-
+    public $enableFlashMessages = true;
     // user
     public $cost = 10;
 
