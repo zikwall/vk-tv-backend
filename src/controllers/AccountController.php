@@ -79,7 +79,6 @@ class AccountController extends BaseController
                         'public_email' => $profile->public_email,
                         'avatar' => $profile->avatar
                     ],
-                    'friends' => Friendship::getFriendsQuery($user)->asArray()->all()
                 ]
             ]
         ], 200);
