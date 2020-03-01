@@ -38,7 +38,7 @@ class Auth
 
     const ERROR_INVALID_PASSWORD = [
         'code' => 5,
-        'message' => 'Password may contain minimum eight characters, at least one uppercase letter, one lowercase letter and one number.',
+        'message' => 'Пароль должен содержать не менее восьми символов, как минимум одну заглавную букву, одну строчную букву и одну цифру.',
         'attributes' => [
             'password'
         ]
