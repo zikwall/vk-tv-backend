@@ -30,7 +30,7 @@ class ApiController extends BaseController
                         (SELECT @last_category_id := null, @I := 0)T
                     WHERE active=1 AND blocked=0 AND visibility!=20
                     /*сортируем по категории, затем рейтингу по убыванию*/
-                    ORDER BY category, rating, votes DESC
+                    ORDER BY category, rating, votes ASC
               )T
               /*выводим по 10 строк из каждой секции*/
               WHERE N <= 20
