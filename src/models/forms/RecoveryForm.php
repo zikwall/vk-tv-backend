@@ -5,8 +5,9 @@ namespace zikwall\vktv\models\forms;
 use vktv\models\User;
 use zikwall\vktv\models\Token;
 use zikwall\vktv\ModuleTrait;
+use yii\base\Model;
 
-class RecoveryForm
+class RecoveryForm extends Model
 {
     use ModuleTrait;
 
