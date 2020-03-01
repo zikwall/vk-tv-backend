@@ -65,7 +65,7 @@
                 'enableSwiftMailerLogging' => true,
                 'transport' => [
                     'class' => 'Swift_SmtpTransport',
-    	            'host' => 'smtp.mail.ru',
+    	            'host' => 'smtp.mail.ru', // beget is smtp.beget.com
     	            'username' => '*******.*********@mail.ru',
     	            'password' => '*************************',
     	            'port' => '465',
@@ -74,6 +74,7 @@
     ],
     //... other components
 ]
+
 ```
 
 #### Migrations
