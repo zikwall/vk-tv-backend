@@ -107,7 +107,7 @@ class Auth
 
     const MESSAGE_SUCCESSUL_SEND_FORGOT_MESSAGE = [
         'code' => 1004,
-        'message' => 'Instructions with further instructions were sent to the indicated email address. All the best for you!',
+        'message' => 'Инструкции с дальнейшими указаниями были отправлены на указанный адрес электронной почты. Проверьте спам.!',
     ];
 
     const MESSAGE_USER_ALREADY_CONFIRMED_SINGUP = [
