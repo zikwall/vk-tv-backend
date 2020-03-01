@@ -5,7 +5,7 @@
  * @var \zikwall\vktv\models\Token  $token
  */
 ?>
-<?= sprintf('Hello %s', $user->username) ?>,
+<?= sprintf('Hello, %s', $user->username) ?>
 
 <?= 'We have received a request to reset the password for your account on PlayHub' ?>.
 <?= 'Please click the link below to complete your password reset' ?>.
