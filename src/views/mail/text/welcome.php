@@ -8,7 +8,7 @@
 ?>
 <?= 'Hello' ?>,
 
-<?= "Your account on {" . Yii::$app->name . "} has been created" ?>.
+<?= "Your account on PlayHub has been created" ?>.
 <?php if ($module->enableGeneratingPassword): ?>
     <?= 'We have generated a password for you' ?>:
     <?= $user->password ?>

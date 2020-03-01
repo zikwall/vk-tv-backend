@@ -45,14 +45,14 @@ class Token extends ActiveRecord
     {
         switch ($this->type) {
             case self::TYPE_CONFIRMATION:
-                $route = '/user/registration/confirm';
+                $route = '/vktv/auth/confirm';
                 break;
             case self::TYPE_RECOVERY:
-                $route = '/user/recovery/reset';
+                $route = '/vktv/auth/reset';
                 break;
             case self::TYPE_CONFIRM_NEW_EMAIL:
             case self::TYPE_CONFIRM_OLD_EMAIL:
-                $route = '/user/settings/confirm';
+                $route = '/vktv/user-settings/confirm';
                 break;
             default:
                 throw new \RuntimeException();
