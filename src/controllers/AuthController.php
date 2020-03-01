@@ -77,6 +77,8 @@ class AuthController extends BaseController
 
     public function actionReset($id, $code)
     {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_HTML;
+
         $token = Token::find()
             ->where(['user_id' => $id, 'code' => $code, 'type' => Token::TYPE_RECOVERY])
             ->one();
