@@ -8,12 +8,15 @@ use zikwall\m3ucontentparser\M3UItem;
 class ParseController extends BaseController
 {
     const PLAYLISTS = [
-        'https://iptvm3u.ru/iptvhd.m3u',
-        'http://iptvm3u.ru/one.m3u',
-        'https://raw.githubusercontent.com/vasiliy78L/myIPTV/master/iptv.m3u',
+        'https://iptvm3u.ru/hdlist.m3u',
+        'http://iptvm3u.ru/onelist.m3u',
+        //'https://raw.githubusercontent.com/vasiliy78L/myIPTV/master/iptv.m3u',
         'http://4pda.ru/pages/go/?u=http%3A%2F%2Ftopplay.do.am%2FFreeBestTV.m3u&e=84875135',
-        'https://webhalpme.ru/if.m3u',
-        'https://iptv-org.github.io/iptv/countries/ru.m3u'
+        'https://iptvm3u.ru/list.m3u',
+        'https://iptvm3u.ru/list18.m3u',
+        'https://iptvm3u.ru/listru.m3u',
+        'https://iptv-org.github.io/iptv/countries/ru.m3u',
+        'https://iptvmaster.ru/kids-all.m3u'
     ];
 
     public function actionRandom()
