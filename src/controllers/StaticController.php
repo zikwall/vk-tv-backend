@@ -37,4 +37,11 @@ class StaticController extends Controller
     {
         return $this->render('about');
     }
+
+    // never
+
+    public function actionNeverPrivacy()
+    {
+        return $this->render('never-privacy');
+    }
 }
